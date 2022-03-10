@@ -1,0 +1,26 @@
+@media only screen and (max-width: 1200px) {
+    .actionButtons {
+        margin: 0 0 10px 10px;
+    }
+    .arrow {
+        background-color: gray;
+        height: 50px;
+    }
+    .body .usersTab .tabHeader {
+        display: none;
+    }
+  }
+
+  .contentTab {
+      text-align: center;
+  }
+
+  .tabHeader {
+      background-color: #1E70B7;
+      color: white;
+      font-weight: bold;
+  }
+
+  .button + .button {
+      margin-left: 10px;
+  }

@@ -1,0 +1,136 @@
+.actuBox {
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(59,59,112,1) 0%, rgba(29,112,183,1) 49%, rgba(29,112,162,1) 100%);
+    padding-bottom: 20px;
+}
+
+.actuBox h2 {
+    color: #fff;
+    font-size: 20px;
+    padding-top: 30px;
+    margin-left: 30px;
+}
+
+.actuBox .actuBoxContent {
+    display: flex;
+    justify-content: center;
+}
+
+.actuBox .actuBoxContent p {
+    color: #fff; 
+    font-size: 15px;
+}
+
+.actuBox .actuBoxContent .listActus {
+    max-height: 300px;
+    overflow-y: scroll;
+    width: 95%;
+}
+
+.listActus::-webkit-scrollbar {
+    width: 6px;
+    margin-left: 20px;
+}
+
+.listActus::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.38);
+}
+
+.actuBox .actuBoxContent .listActus .actu {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 99%;
+    margin-bottom: 20px;
+}
+
+.actuBox .actuBoxContent .listActus .actu h3 {
+    padding: 10px; 
+    margin: 0px; 
+    color: #000; 
+}
+
+.actuBox .actuBoxContent .listActus .actu p {
+    margin: 0px; 
+    width: calc(100% - 150px);
+    margin-left: 10px;
+    padding-bottom: 10px;
+    color: #000; 
+}
+
+.nextEvents {
+    width: 100%;
+    border-radius: 10px;
+    background: #fff;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.nextEvents h2 {
+    color: #000;
+    font-size: 20px;
+    padding-top: 30px;
+    margin-left: 30px;
+}
+
+.calendar {
+    margin-left: 20px;
+}
+
+.nextEvents .grid {
+    display: grid;
+    grid-template-columns: repeat(10, 10%);
+}
+
+.nextEvents .grid .item-one {
+    margin-bottom: 20px;
+    grid-column: 1 / 4;
+}
+
+.nextEvents .grid .item-two {
+    grid-column: 4 / 11;
+    margin-right: 20px;
+    padding-right: 20px;
+    max-height: 350px;
+    overflow-y: scroll;
+}
+
+.nextEvents .item-three {
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 20px;
+    grid-column: 9 / 11;
+    margin-right: 20px;
+    color: #1D70B7;
+}
+
+.item-two::-webkit-scrollbar {
+    width: 6px;
+}
+
+.item-two::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: rgba(48, 48, 48, 0.5);
+}
+
+@media only screen and (max-width: 1500px) {
+    .nextEvents .grid .item-one {
+        grid-column: 1 / 11;
+    }
+    
+    .nextEvents .grid .item-two {
+        grid-column: 1 / 11;
+        margin-left: 20px;
+    }
+
+    .nextEvents .item-three {
+        margin-left: 20px;
+        grid-column: 1 / 11;
+    }
+}
+
+.nextEvents .item-three p {
+    font-weight: 500;
+    font-size: 16px;
+}
