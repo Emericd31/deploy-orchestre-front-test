@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4329be26.css",
+    "main.js": "/static/js/main.c63f0c7c.js",
+    "static/media/page_under_construction.png": "/static/media/page_under_construction.87b058dc5c55cf4f9ca2.png",
+    "static/media/affiche_concert.png": "/static/media/affiche_concert.eca0c0a5b84767fb9d7c.png",
+    "index.html": "/index.html",
+    "main.4329be26.css.map": "/static/css/main.4329be26.css.map",
+    "main.c63f0c7c.js.map": "/static/js/main.c63f0c7c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4329be26.css",
+    "static/js/main.c63f0c7c.js"
+  ]
+}
