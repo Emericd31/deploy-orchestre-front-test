@@ -15,11 +15,26 @@ class LiveBriefedTextField extends BriefedTextField {
   handleLeavingField = (event) => {
     const inputText = event.target.value;
     const inputIsNull = inputText.length === 0;
-    const errorState =
-      !this.props.syntaxChecker(event.target.value) || inputIsNull;
+    let errorState = false;
+    if (inputIsNull) {
+      if (this.props.required) {
+        errorState = true;
+      } else {
+        errorState = false;
+      }
+    } else {
+      if (this.props.syntaxChecker(event.target.value)) {
+        errorState = false;
+      } else {
+        errorState = true;
+      }
+    }
+    
+    // const errorState =
+    //   !this.props.syntaxChecker(event.target.value) || (inputIsNull && this.props.required);
     this.setState({
       inputText: inputText,
-      helperText: inputIsNull ? "Veuillez remplir ce champ." : "",
+      helperText: (this.props.required && inputIsNull) ? "Veuillez remplir ce champ." : "",
       errorState: errorState,
     });
     this.props.saveField(inputText, errorState);

@@ -2,7 +2,7 @@ import React from "react";
 import { GreenButton, RedButton } from "../../components/General/StyledComponents/StyledComponents";
 import { Link as LinkRouter } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
-import { Grid } from "@mui/material";
+import { Collapse, Grid } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -13,6 +13,50 @@ import IconButton from '@mui/material/IconButton';
 import "../../App.css";
 import "../../styles/membersAdmin.css";
 import { getUsers } from "../../GraphQL/queries/UserQueries";
+
+function Row(props) {
+    const { user } = props;
+    const [open, setOpen] = React.useState(false);
+
+    return (
+        <>
+            <Grid container key={user.id} style={{ border: "1px solid #E0E0E0", borderRadius: "2px", backgroundColor: "white" }}>
+                <Grid item lg={2} md={6} xs={12}>
+                    <p className="contentTab">{user.lastName}</p>
+                </Grid>
+                <Grid item lg={2} md={6} xs={12}>
+                    <p className="contentTab">{user.firstName}</p>
+                </Grid>
+                <Grid item lg={1} md={6} xs={12}>
+                    <p className="contentTab">{user.isRegistered ? <CheckCircleIcon style={{ color: "green" }} /> : <CancelIcon style={{ color: "red" }} />}</p>
+                </Grid>
+                <Grid item lg={4} md={6} xs={12}>
+                    <p className="contentTab">{user.email}</p>
+                </Grid>
+                <Grid item lg={2} md={12} xs={12} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div className="actionButtons">
+                        <GreenButton className="button"><EditIcon /></GreenButton>
+                        <RedButton className="button"><DeleteIcon /></RedButton>
+                    </div>
+                </Grid>
+                <Grid item lg={1} md={12} xs={12} className="arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                        style={{ float: "right" }}
+                    >
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </Grid>
+            </Grid>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <div style={{ height: "50px", width: "100%", backgroundColor: "gray" }}>
+                </div>
+            </Collapse>
+        </>
+    );
+}
 
 class MembersAdministrationPage extends React.Component {
     constructor(props) {
@@ -61,36 +105,7 @@ class MembersAdministrationPage extends React.Component {
                     {
                         this.state.users.map(user => {
                             return (
-                                <Grid container key={user.id} style={{ border: "1px solid #E0E0E0", borderRadius: "2px", backgroundColor: "white" }}>
-                                    <Grid item lg={2} md={6} xs={12}>
-                                        <p className="contentTab">{user.lastName}</p>
-                                    </Grid>
-                                    <Grid item lg={2} md={6} xs={12}>
-                                        <p className="contentTab">{user.firstName}</p>
-                                    </Grid>
-                                    <Grid item lg={1} md={6} xs={12}>
-                                        <p className="contentTab">{user.isRegistered ? <CheckCircleIcon style={{ color: "green" }} /> : <CancelIcon style={{ color: "red" }} />}</p>
-                                    </Grid>
-                                    <Grid item lg={4} md={6} xs={12}>
-                                        <p className="contentTab">{user.email}</p>
-                                    </Grid>
-                                    <Grid item lg={2} md={12} xs={12} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        <div className="actionButtons">
-                                            <GreenButton className="button"><EditIcon /></GreenButton>
-                                            <RedButton className="button"><DeleteIcon /></RedButton>
-                                        </div>
-                                    </Grid>
-                                    <Grid item lg={1} md={12} xs={12} className="arrow" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        <IconButton
-                                            aria-label="expand row"
-                                            size="small"
-                                            onClick={() => this.setState({ open: !this.state.open })}
-                                            style={{ float: "right" }}
-                                        >
-                                            {this.state.open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                        </IconButton>
-                                    </Grid>
-                                </Grid>
+                                <Row user={user} key={user.id} />
                             );
                         })
                     }

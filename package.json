@@ -1,8 +1,8 @@
 {
   "name": "orchestre",
   "version": "0.1.0",
+  "homepage":"https://emericd31.github.io/deploy-orchestre-front-test/",
   "private": true,
-  "homepage":"https://Emericd31.github.io",
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
@@ -28,12 +28,12 @@
     "web-vitals": "^2.1.3"
   },
   "scripts": {
-    "start": "PORT=3000 react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start PORT=3000",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

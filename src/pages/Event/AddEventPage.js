@@ -7,7 +7,7 @@ import LogisticProgramForm from "../../components/Event/forms/LogicsticProgramFo
 import DiffusionForm from "../../components/Event/forms/DiffusionForm";
 import { addEvent } from "../../GraphQL/mutations/EventMutations";
 import Popup from "../../components/General/Popups/Popup";
-import { Link } from "@mui/material";
+import { Link as LinkRouter } from "react-router-dom";
 import "../../App.css"
 
 const backgroundGradient =
@@ -230,7 +230,7 @@ class AddEventPage extends React.Component {
             address: this.state.event.eventAddress,
             addressComplement: this.state.event.eventAddressComplement,
             postalCode: this.state.event.eventPostalCode,
-            city: this.state.event.eventCity, 
+            city: this.state.event.eventCity,
             phoneNumber: this.state.event.eventPhoneNumber,
             mobileNumber: this.state.event.eventMobileNumber,
             email: this.state.event.eventEmail,
@@ -379,7 +379,9 @@ class AddEventPage extends React.Component {
                 >
                     <Alert severity="success" variant="filled">Évènement ajouté avec succès.</Alert>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        <Button variant="contained" component={Link} href="/eventsGestion" style={{ marginTop: "20px" }}>Voir les évènements</Button>
+                        <LinkRouter to="/eventsGestion" style={{ textDecoration: "none" }}>
+                            <Button variant="contained" style={{ marginTop: "20px" }}>Voir les évènements</Button>
+                        </LinkRouter>
                     </div>
                 </Popup>
 
@@ -394,7 +396,9 @@ class AddEventPage extends React.Component {
                 >
                     <Alert severity="error" variant="filled">Une erreur est survenue lors de l'ajout de l'évènement, veuillez réessayer ultérieurement.</Alert>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        <Button variant="contained" component={Link} href="/eventsGestion" style={{ marginTop: "20px" }}>Voir les évènements</Button>
+                        <LinkRouter to="/eventsGestion" style={{ textDecoration: "none" }}>
+                            <Button variant="contained" style={{ marginTop: "20px" }}>Voir les évènements</Button>
+                        </LinkRouter>
                     </div>
                 </Popup>
             </div>

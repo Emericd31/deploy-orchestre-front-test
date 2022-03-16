@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, BrowserRouter, Routes, Navigate, useParams } from 'react-router-dom';
+import { Route, HashRouter, Routes, Navigate, Router, BrowserRouter } from 'react-router-dom';
 import LoginPage from './pages/User/LoginPage';
 import NotFoundPage from './pages/General/NotFoundPage';
 import NewProfilePage from './pages/User/NewProfilePage';
@@ -137,12 +137,12 @@ class MainRouter extends React.Component {
     return (
       this.state.loaded ? (
         <div>
-          <BrowserRouter forceRefresh={false}>
+          <BrowserRouter forceRefresh={false} >
             <Routes>
-              <Route path='/signin' element={<RedirectToHome><LoginPage /></RedirectToHome>} />
+              <Route path='/deploy-orchestre-front-test/signin' element={<RedirectToHome><LoginPage /></RedirectToHome>} />
                 <Route exact path='/verify/:token' element={<MailValidationPage />} />
               <Route path='/newprofile' element={<NewProfileRoute><NewProfilePage /></NewProfileRoute>} />
-              <Route path="/" element={<AuthRoute><App /></AuthRoute>}>
+              <Route path="/deploy-orchestre-front-test" element={<AuthRoute><App /></AuthRoute>}>
                 <Route path='/membersGestion' element={<AuthMembersGestion myRights={this.state.myRights}><MembersAdministrationPage /></AuthMembersGestion>} />
                 <Route path='/add/user' element={<AuthMembersGestion myRights={this.state.myRights}><AddMemberPage /></AuthMembersGestion>} />
                 <Route path='/profileCompleted' element={<ProfileCompletedPage />} />
@@ -163,7 +163,7 @@ class MainRouter extends React.Component {
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
-          </BrowserRouter >
+          </BrowserRouter>
         </div>) : ""
     )
   }

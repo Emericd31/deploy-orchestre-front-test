@@ -12,6 +12,7 @@ import {
     DateTimePicker
 } from '@mui/lab';
 import BriefedTextField from "../../General/TextFields/BriefedTextField";
+import LiveBriefedTextField from "../../General/TextFields/LiveBriefedTextField";
 
 class LogisticProgramForm extends React.Component {
     constructor(props) {
@@ -69,20 +70,10 @@ class LogisticProgramForm extends React.Component {
     };
 
     checkRequiredFields() {
-        let addressValid = this.state.address !== "";
-        let postalCodeValid = this.state.postalCode !== "";
-        let cityValid = this.state.city !== "";
-        let transportModeValid = this.state.transportMode !== "";
-        let tenueVestimentaireValid = this.state.tenueVestimentaire !== "";
-        let musicalProgramValid = this.state.musicalProgram !== "";
+        let postalCodeValid = this.state.postalCode === "" || this.postalCodeSyntaxCheck(this.state.postalCode);
 
         let currentFieldsAreValid = this.state.fieldsAreValid;
-        let checkValidity = addressValid &&
-            postalCodeValid &&
-            cityValid &&
-            transportModeValid &&
-            tenueVestimentaireValid &&
-            musicalProgramValid;
+        let checkValidity = postalCodeValid;
 
         if ((currentFieldsAreValid && !checkValidity) || (!currentFieldsAreValid && checkValidity)) {
             this.setState({
@@ -94,6 +85,11 @@ class LogisticProgramForm extends React.Component {
                 }
             });
         }
+    }
+
+    postalCodeSyntaxCheck = (postalCode) => {
+        const regex = /^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/;
+        return postalCode.match(regex);
     }
 
     saveEventInfo(plusOrMinus) {
@@ -129,7 +125,7 @@ class LogisticProgramForm extends React.Component {
                     <Grid item xs={6}>
                         <FormControl fullWidth size="small">
                             <InputLabel id="clothes_label">
-                                Tenue vestimentaire *
+                                Tenue vestimentaire
                             </InputLabel>
                             <Select
                                 id="type"
@@ -154,7 +150,7 @@ class LogisticProgramForm extends React.Component {
                     <Grid item xs={6}>
                         <FormControl fullWidth size="small">
                             <InputLabel id="transport_mode_label">
-                                Mode de transport *
+                                Mode de transport
                             </InputLabel>
                             <Select
                                 id="type"
@@ -193,7 +189,7 @@ class LogisticProgramForm extends React.Component {
                             label="Adresse de rendez-vous"
                             type="text"
                             name="text"
-                            required={true}
+                            required={false}
                             value={this.state.address}
                             saveField={(input, errorState) =>
                                 this.updateField("address", input, errorState)
@@ -205,16 +201,17 @@ class LogisticProgramForm extends React.Component {
                         item
                         xs={3}
                     >
-                        <BriefedTextField
+                        <LiveBriefedTextField
                             id={"postalCode-field"}
                             label="Code Postal"
                             type="text"
-                            name="text"
-                            required={true}
+                            required={false}
                             value={this.state.postalCode}
+                            helperText="La syntaxe du code postal n'est pas valide."
                             saveField={(input, errorState) =>
                                 this.updateField("postalCode", input, errorState)
                             }
+                            syntaxChecker={this.postalCodeSyntaxCheck}
                         />
                     </Grid>
                     <Grid
@@ -226,7 +223,7 @@ class LogisticProgramForm extends React.Component {
                             label="Ville"
                             type="text"
                             name="text"
-                            required={true}
+                            required={false}
                             value={this.state.city}
                             saveField={(input, errorState) =>
                                 this.updateField("city", input, errorState)
@@ -240,7 +237,7 @@ class LogisticProgramForm extends React.Component {
                     >
                         <FormControl fullWidth size="small">
                             <InputLabel id="programme_musical_label">
-                                Programme musical *
+                                Programme musical
                             </InputLabel>
                             <Select
                                 id="type"

@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import BriefedTextField from "../../General/TextFields/BriefedTextField";
+import LiveBriefedTextField from "../../General/TextFields/LiveBriefedTextField";
 import { TextField } from "@mui/material";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -13,6 +14,8 @@ import { Select } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { Button } from "@mui/material";
 import { getMusicalFormations } from "../../../GraphQL/queries/EventQueries";
+
+const emailRegexSafe = require("email-regex-safe");
 
 class GeneralData extends React.Component {
     constructor(props) {
@@ -29,7 +32,7 @@ class GeneralData extends React.Component {
             phoneNumber: props.event.eventPhoneNumber,
             mobileNumber: props.event.eventMobileNumber,
             email: props.event.eventEmail,
-            tempMusicalFormation: props.event.musicalFormation, 
+            tempMusicalFormation: props.event.musicalFormation,
             musicalFormation: "",
             eventType: props.event.eventType,
             musicalFormations: [],
@@ -68,12 +71,13 @@ class GeneralData extends React.Component {
     checkRequiredFields() {
         let intituleValid = this.state.intitule !== "";
         let addressValid = this.state.address !== "";
-        let postalCodeValid = this.state.postalCode !== "";
+        let postalCodeValid = this.state.postalCode !== "" && this.postalCodeSyntaxCheck(this.state.postalCode);
         let cityValid = this.state.city !== "";
-        let mobileNumberValid = this.state.mobileNumber !== "";
-        let emailValid = this.state.email !== "";
         let eventTypeValid = this.state.eventType !== "";
         let musicalFormationValid = this.state.musicalFormation !== "";
+        let phoneNumberValid = this.state.phoneNumber === "" || this.phoneSyntaxCheck(this.state.phoneNumber);
+        let mobileNumberValid = this.state.mobileNumber === "" || this.phoneSyntaxCheck(this.state.mobileNumber);
+        let emailValid = this.state.email === "" || (this.state.email !== "" && this.emailSyntaxCheck(this.state.email));
 
         let currentFieldsAreValid = this.state.fieldsAreValid;
         let checkValidity =
@@ -81,6 +85,7 @@ class GeneralData extends React.Component {
             addressValid &&
             postalCodeValid &&
             cityValid &&
+            phoneNumberValid &&
             mobileNumberValid &&
             emailValid &&
             eventTypeValid &&
@@ -96,6 +101,20 @@ class GeneralData extends React.Component {
                 }
             });
         }
+    }
+
+    emailSyntaxCheck = (email) => {
+        return email.match(emailRegexSafe());
+    };
+
+    postalCodeSyntaxCheck = (postalCode) => {
+        const regex = /^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/;
+        return postalCode.match(regex);
+    }
+
+    phoneSyntaxCheck = (phone) => {
+        const regex = /^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/;
+        return phone.match(regex);
     }
 
     saveEventInfo() {
@@ -131,6 +150,7 @@ class GeneralData extends React.Component {
                 >
                     <h1>Informations Générales : </h1>
                 </div>
+                <p>* champs obligatoires</p>
 
                 <Grid container spacing={3} style={{ textAlign: "center" }}>
                     <Grid item xs={12}>
@@ -253,16 +273,17 @@ class GeneralData extends React.Component {
                         item
                         xs={3}
                     >
-                        <BriefedTextField
+                        <LiveBriefedTextField
                             id={"postalCode-field"}
                             label="Code Postal"
                             type="text"
-                            name="text"
                             required={true}
                             value={this.state.postalCode}
+                            helperText="La syntaxe du code postal n'est pas valide."
                             saveField={(input, errorState) =>
                                 this.updateField("postalCode", input, errorState)
                             }
+                            syntaxChecker={this.postalCodeSyntaxCheck}
                         />
                     </Grid>
                     <Grid
@@ -286,47 +307,51 @@ class GeneralData extends React.Component {
                         item
                         xs={3}
                     >
-                        <BriefedTextField
+                        <LiveBriefedTextField
                             id={"phoneNumber-field"}
                             label="Téléphone Fixe"
                             type="text"
-                            name="text"
+                            required={false}
                             value={this.state.phoneNumber}
+                            helperText="La syntaxe du numéro de téléphone n'est pas valide."
                             saveField={(input, errorState) =>
                                 this.updateField("phoneNumber", input, errorState)
                             }
+                            syntaxChecker={this.phoneSyntaxCheck}
                         />
                     </Grid>
                     <Grid
                         item
                         xs={3}
                     >
-                        <BriefedTextField
+                        <LiveBriefedTextField
                             id={"mobileNumber-field"}
                             label="Téléphone Mobile"
                             type="text"
-                            name="text"
-                            required={true}
+                            required={false}
                             value={this.state.mobileNumber}
+                            helperText="La syntaxe du numéro de téléphone n'est pas valide."
                             saveField={(input, errorState) =>
                                 this.updateField("mobileNumber", input, errorState)
                             }
+                            syntaxChecker={this.phoneSyntaxCheck}
                         />
                     </Grid>
                     <Grid
                         item
                         xs={6}
                     >
-                        <BriefedTextField
+                        <LiveBriefedTextField
                             id={"email-field"}
                             label="Adresse mail"
-                            type="text"
-                            name="text"
-                            required={true}
+                            type="email"
+                            required={false}
                             value={this.state.email}
+                            helperText="La syntaxe de l'e-mail n'est pas valide."
                             saveField={(input, errorState) =>
                                 this.updateField("email", input, errorState)
                             }
+                            syntaxChecker={this.emailSyntaxCheck}
                         />
                     </Grid>
                 </Grid>

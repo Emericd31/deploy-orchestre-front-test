@@ -14,19 +14,18 @@ class DiffusionForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fieldsAreValid: false, 
             diffusionIllustration: props.event.diffusionIllustration,
             diffusionPublicDescription: props.event.diffusionPublicDescription,
             diffusionInformations: props.event.diffusionInformations,
-            diffusionActiveMembers: props.event.diffusionActiveMembers, 
+            diffusionActiveMembers: props.event.diffusionActiveMembers,
             diffusionPublic: props.event.diffusionPublic,
-            diffusionAdministration: props.event.diffusionAdministration,
+            diffusionAdministration: true,
             diffusionEndInscriptionDate: props.event.diffusionEndInscriptionDate
         };
     }
 
     componentDidMount() {
-        this.checkRequiredFields();
+        this.props.functionCheckCompleted(3, true);
     }
 
     updateField(field, input, errorState) {
@@ -38,48 +37,25 @@ class DiffusionForm extends React.Component {
     }
 
     changeCheck(field, input) {
-      this.setState({
-        [field]: input,
-      }, () => {
-          this.checkRequiredFields();
-      });
+        this.setState({
+            [field]: input,
+        });
     }
 
     handleDateChange = (itemName, date) => {
         this.setState({ [itemName]: date });
     };
 
-    checkRequiredFields() {
-        let diffusionPublicDescriptionValid = this.state.diffusionPublicDescription !== "";
-        let diffusionModeValid = this.state.diffusionAdministration || this.state.diffusionPublic || this.state.diffusionActiveMembers; 
-
-        let currentFieldsAreValid = this.state.fieldsAreValid;
-        let checkValidity =
-            diffusionPublicDescriptionValid &&
-            diffusionModeValid;
-
-        if ((currentFieldsAreValid && !checkValidity) || (!currentFieldsAreValid && checkValidity)) {
-            this.setState({
-                fieldsAreValid: checkValidity
-            }, () => {
-                if ((currentFieldsAreValid === false && this.state.fieldsAreValid === true) ||
-                    (currentFieldsAreValid === true && this.state.fieldsAreValid === false)) {
-                    this.props.functionCheckCompleted(3, this.state.fieldsAreValid);
-                }
-            });
-        }
-    }
-
     saveEventInfo(plusOrMinus) {
         let event = {
-            diffusionIllustration : this.state.diffusionIllustration, 
-            diffusionPublicDescription : this.state.diffusionPublicDescription, 
-            diffusionInformations : this.state.diffusionInformations, 
-            diffusionActiveMembers : this.state.diffusionActiveMembers, 
-            diffusionPublic : this.state.diffusionPublic, 
-            diffusionAdministration : this.state.diffusionAdministration, 
-            diffusionEndInscriptionDate : this.state.diffusionEndInscriptionDate
-        }; 
+            diffusionIllustration: this.state.diffusionIllustration,
+            diffusionPublicDescription: this.state.diffusionPublicDescription,
+            diffusionInformations: this.state.diffusionInformations,
+            diffusionActiveMembers: this.state.diffusionActiveMembers,
+            diffusionPublic: this.state.diffusionPublic,
+            diffusionAdministration: this.state.diffusionAdministration,
+            diffusionEndInscriptionDate: this.state.diffusionEndInscriptionDate
+        };
         this.props.functionCallback(event, plusOrMinus);
     }
 
@@ -206,12 +182,6 @@ class DiffusionForm extends React.Component {
                                     <Checkbox
                                         checked={this.state.diffusionAdministration}
                                         value={this.state.diffusionAdministration}
-                                        onChange={() =>
-                                            this.changeCheck(
-                                                "diffusionAdministration",
-                                                !this.state.diffusionAdministration
-                                            )
-                                        }
                                         name="Calendrier_administration"
                                         color="primary"
                                     />
@@ -251,7 +221,7 @@ class DiffusionForm extends React.Component {
                         Retour
                     </Button>
                     <Button
-                        disabled={!this.state.fieldsAreValid}
+                        disabled={false}
                         onClick={() => this.saveEventInfo(0)}
                         variant="contained"
                         sx={{
