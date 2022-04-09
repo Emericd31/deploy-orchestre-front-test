@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/deploy-orchestre-front-test/static/css/main.4329be26.css",
-    "main.js": "/deploy-orchestre-front-test/static/js/main.e7b09d25.js",
+    "main.css": "/deploy-orchestre-front-test/static/css/main.d45e639c.css",
+    "main.js": "/deploy-orchestre-front-test/static/js/main.0c1168b3.js",
     "static/media/page_under_construction.png": "/deploy-orchestre-front-test/static/media/page_under_construction.87b058dc5c55cf4f9ca2.png",
     "static/media/affiche_concert.png": "/deploy-orchestre-front-test/static/media/affiche_concert.eca0c0a5b84767fb9d7c.png",
     "index.html": "/deploy-orchestre-front-test/index.html",
-    "main.4329be26.css.map": "/deploy-orchestre-front-test/static/css/main.4329be26.css.map",
-    "main.e7b09d25.js.map": "/deploy-orchestre-front-test/static/js/main.e7b09d25.js.map"
+    "main.d45e639c.css.map": "/deploy-orchestre-front-test/static/css/main.d45e639c.css.map",
+    "main.0c1168b3.js.map": "/deploy-orchestre-front-test/static/js/main.0c1168b3.js.map"
   },
   "entrypoints": [
-    "static/css/main.4329be26.css",
-    "static/js/main.e7b09d25.js"
+    "static/css/main.d45e639c.css",
+    "static/js/main.0c1168b3.js"
   ]
 }
