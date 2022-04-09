@@ -43,7 +43,7 @@ export var addInstrument = async function (
   return await serverClient.request(mutation, variables);
 };
 
-export var ModifyInstrument = async function (
+export var modifyInstrument = async function (
   instrumentId,
   marque,
   model,
@@ -83,10 +83,12 @@ export var ModifyInstrument = async function (
       }
     }
   `;
-  return await client.request(mutation, variables);
+  return await serverClient.request(mutation, variables);
 };
 
 export var removeInstrument = async function (instrumentId) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
   const variables = {
     instrumentId: instrumentId,
   };
@@ -98,5 +100,5 @@ export var removeInstrument = async function (instrumentId) {
       }
     }
   `;
-  return await client.request(mutation, variables);
+  return await serverClient.request(mutation, variables);
 };

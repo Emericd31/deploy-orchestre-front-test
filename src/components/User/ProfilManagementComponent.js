@@ -1,16 +1,15 @@
 import React from "react";
-import HorizontalNonLinearStepper from "./CustomizedStepper";
-
+import CustomizedStepper from "./CustomizedStepper";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import PersonIcon from "@mui/icons-material/Person";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import PersonalDataForm from "./forms/PersonalDataForm";
-import InstrumentsForm from "./forms/InstrumentsForm";
-import HealthForm from "./forms/HealthForm";
-import ImageRightForm from "./forms/ImageRightForm";
+import PersonalDataInitialization from "./InitialProfile/PersonalDataInitialization";
+import InstrumentsInitialization from "./InitialProfile/InstrumentsInitialization";
+import HealthInitialization from "./InitialProfile/HealthInitialization";
+import ImageRightInitialization from "./InitialProfile/ImageRightInitialization";
 import { Alert, createTheme } from "@mui/material";
 
 const backgroundGradient =
@@ -105,7 +104,7 @@ class ProfilManagementComponent extends React.Component {
   initializeComponents() {
     let components = [];
 
-    components.push(<PersonalDataForm
+    components.push(<PersonalDataInitialization
       functionCallback={() => this.setState({
         currentComponentId: this.state.currentComponentId + 1
       })
@@ -116,9 +115,9 @@ class ProfilManagementComponent extends React.Component {
           [index]: bool,
         }
       }))}
-    ></PersonalDataForm>);
+    ></PersonalDataInitialization>);
 
-    components.push(<InstrumentsForm
+    components.push(<InstrumentsInitialization
       functionCallback={() => this.setState({
         currentComponentId: this.state.currentComponentId + 1
       })}
@@ -130,9 +129,9 @@ class ProfilManagementComponent extends React.Component {
           ...prevState.componentComplete,
           [index]: bool,
         }
-      }))}></InstrumentsForm>);
+      }))}></InstrumentsInitialization>);
 
-    components.push(<HealthForm
+    components.push(<HealthInitialization
       functionCallback={() => this.setState({
         currentComponentId: this.state.currentComponentId + 1
       })}
@@ -144,9 +143,9 @@ class ProfilManagementComponent extends React.Component {
           ...prevState.componentComplete,
           [index]: bool,
         }
-      }))}></HealthForm>);
+      }))}></HealthInitialization>);
 
-    components.push(<ImageRightForm
+    components.push(<ImageRightInitialization
       functionCallback={() => console.log("ok")}
       functionCallbackDecrement={() => this.setState({
         currentComponentId: this.state.currentComponentId - 1
@@ -156,7 +155,7 @@ class ProfilManagementComponent extends React.Component {
           ...prevState.componentComplete,
           [index]: bool,
         }
-      }))}></ImageRightForm>);
+      }))}></ImageRightInitialization>);
     this.setState({
       components: components,
       componentsValidity: [false, false, true, false],
@@ -233,7 +232,7 @@ class ProfilManagementComponent extends React.Component {
           }
         </div>
         <div>
-          <HorizontalNonLinearStepper
+          <CustomizedStepper
             steps={steps}
             currentStep={currentComponentId}
             completed={componentComplete}

@@ -1,0 +1,27 @@
+/* Ecran dont la taille est supérieure à 1200 pixels */
+@media screen and (min-width: 1200px) {
+    .tabHeader {
+        background-color: #1D70B7;
+        font-weight: bold;
+        color: white;
+    }
+
+    .tabHeader .titleTab {
+        padding-left: 20px;
+        text-align: left;
+    }
+}
+
+/* Ecran dont la taille est inférieure à 1200 pixels */
+@media screen and (max-width: 1200px) {
+    .tabHeader {
+        margin-bottom: 10px;
+        display: none !important;
+    }
+}
+
+/* Toutes les tailles d'écran */
+.tabContent .contentTab {
+    padding-left: 20px;
+    text-align: left;
+}

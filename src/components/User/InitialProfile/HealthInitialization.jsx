@@ -21,8 +21,9 @@ import { modifyCurrentUserHealthData } from "../../../GraphQL/mutations/UserMuta
 import { Snackbar } from "@mui/material";
 import { Alert } from "@mui/material";
 import MedicalPrescription from "../MedicalPrescription";
+import LiveBriefedTextField from "../../General/TextFields/LiveBriefedTextField";
 
-class HealthForm extends React.Component {
+class HealthInitialization extends React.Component {
   constructor(props) {
     super(props);
 
@@ -38,9 +39,9 @@ class HealthForm extends React.Component {
       currentAllergiesText: "",
       currentHealthProblems: "",
       currentMedicalDevices: "",
-      currentReferringDoctorFirstname: "", 
-      currentReferringDoctorLastname: "", 
-      currentReferringDoctorMobileNumber: "", 
+      currentReferringDoctorFirstname: "",
+      currentReferringDoctorLastname: "",
+      currentReferringDoctorMobileNumber: "",
       currentExactData: false,
       openSnackbar: false,
       selectedFile: null,
@@ -162,27 +163,32 @@ class HealthForm extends React.Component {
 
   saveUserInfo = () => {
     modifyCurrentUserHealthData(
-      this.state.currentBloodType, 
-      this.state.currentSocialSecurityNumber, 
-      this.state.currentMedicalTreatment, 
-      this.state.currentFoodAllergy, 
-      this.state.currentDrugAllergy, 
-      this.state.currentAsthma, 
-      this.state.currentAllergiesText, 
-      this.state.currentHealthProblems, 
-      this.state.currentMedicalDevices, 
-      this.state.currentReferringDoctorFirstname, 
-      this.state.currentReferringDoctorLastname, 
+      this.state.currentBloodType,
+      this.state.currentSocialSecurityNumber,
+      this.state.currentMedicalTreatment,
+      this.state.currentFoodAllergy,
+      this.state.currentDrugAllergy,
+      this.state.currentAsthma,
+      this.state.currentAllergiesText,
+      this.state.currentHealthProblems,
+      this.state.currentMedicalDevices,
+      this.state.currentReferringDoctorFirstname,
+      this.state.currentReferringDoctorLastname,
       this.state.currentReferringDoctorMobileNumber
     ).then((res) => {
       if (res.modifyCurrentUserHealthData.statusCode === 200) {
-        this.props.functionCallback(); 
+        this.props.functionCallback();
       }
     })
   }
 
   handleClose = () => {
     this.setState({ openSnackbar: false });
+  }
+
+  phoneSyntaxCheck = (phone) => {
+    const regex = /^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/;
+    return phone.match(regex);
   }
 
   render() {
@@ -503,7 +509,7 @@ class HealthForm extends React.Component {
             />
           </Grid>
           <Grid item xs={12} md={6} lg={6}>
-            <BriefedTextField
+            {/* <BriefedTextField
               id={"mobile-number-field"}
               label="Téléphone mobile"
               type="text"
@@ -512,6 +518,18 @@ class HealthForm extends React.Component {
               saveField={(input, errorState) =>
                 this.updateField("currentReferringDoctorMobileNumber", input, errorState)
               }
+            /> */}
+            <LiveBriefedTextField
+              id={"mobileNumber-field"}
+              required={false}
+              label="Téléphone Mobile"
+              type="tel"
+              value={this.state.currentReferringDoctorMobileNumber}
+              helperText="La syntaxe du numéro de téléphone n'est pas valide."
+              saveField={(input, errorState) =>
+                this.updateField("currentReferringDoctorMobileNumber", input, errorState)
+              }
+              syntaxChecker={this.phoneSyntaxCheck}
             />
           </Grid>
         </Grid>
@@ -574,7 +592,7 @@ class HealthForm extends React.Component {
             Retour
           </Button>
           <Button
-            disabled={!this.state.currentExactData}
+            disabled={!this.state.currentExactData || (this.state.currentReferringDoctorMobileNumber !== "" && !this.phoneSyntaxCheck(this.state.currentReferringDoctorMobileNumber))}
             onClick={() => this.saveUserInfo()}
             variant="contained"
             sx={{
@@ -590,4 +608,4 @@ class HealthForm extends React.Component {
   }
 }
 
-export default HealthForm;
+export default HealthInitialization;

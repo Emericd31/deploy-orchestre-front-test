@@ -1,17 +1,16 @@
 import React from "react";
 import { getPersonalData } from '../../GraphQL/queries/UserQueries';
-import { GrayButton } from "../../components/General/StyledComponents/StyledComponents";
 import Calendar from '../../components/General/TextFields/Calendar';
 import SplitButton from "../../components/General/TextFields/SplitButton";
 import { getEventsGeneralInfos } from "../../GraphQL/queries/EventQueries";
 import { getDayNumbersMonthLettersYearNumbers, getHours } from "../../Helpers/DateGestion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { GreenButton } from "../../components/General/StyledComponents/StyledComponents";
+import { GreenButton } from "../../components/General/StyledComponents/StyledButtons";
 import "../../App.css";
 import "../../styles/board.css";
 import { Grid } from "@mui/material";
 import { Link as LinkRouter } from "react-router-dom";
-import { rightIsInRole } from '../../Helpers/RightsGestion';
+import { hasRight } from '../../Helpers/RightsGestion';
 import { getActualities } from "../../GraphQL/queries/ActualityQueries";
 
 class BoardPage extends React.Component {
@@ -79,7 +78,7 @@ class BoardPage extends React.Component {
                                                             <p>{actu.content}</p>
                                                             {
                                                                 actu.textLink !== "" ? (
-                                                                    <LinkRouter to={"/"+actu.link} replace={true} style={{ textDecoration: "none" }}>
+                                                                    <LinkRouter to={"/" + actu.link} replace={true} style={{ textDecoration: "none" }}>
                                                                         <GreenButton style={{ float: "right", bottom: "40px", right: "5px", marginBottom: "10px" }}>{actu.textLink}</GreenButton>
                                                                     </LinkRouter>
                                                                 ) : ""
@@ -104,8 +103,7 @@ class BoardPage extends React.Component {
                                 {
                                     this.state.events.length > 0 ? (
                                         <>
-
-                                            <div className="item-two">
+                                            <div className="item-two" style={{ overflowX: "hidden" }}>
                                                 <Grid container style={{ marginLeft: "20px" }}>
                                                     <Grid item lg={4} md={6} xs={12}>
                                                         <p>Intitulé</p>
@@ -141,7 +139,7 @@ class BoardPage extends React.Component {
                                                     })
                                                 }
                                             </div>
-                                            <LinkRouter to={rightIsInRole(this.props.myRights, "manage_events") ? "/eventsGestion" : "/events"} className="item-three">
+                                            <LinkRouter to={hasRight("manage_events") ? "/eventsGestion" : "/events"} className="item-three">
                                                 <p style={{ display: "inline" }}>Voir tous les évènements</p>
                                                 <ArrowForwardIcon style={{ position: "relative", top: "5px", left: "5px", fontSize: "20px" }} />
                                             </LinkRouter>

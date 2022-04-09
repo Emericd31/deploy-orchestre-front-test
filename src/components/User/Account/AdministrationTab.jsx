@@ -2,14 +2,14 @@ import React from "react";
 import { IconButton, Collapse } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { getMyRights } from "../../GraphQL/queries/UserQueries";
+import { getMyRights } from "../../../GraphQL/queries/UserQueries";
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Chip from '@mui/material/Chip';
 import DoneIcon from '@mui/icons-material/Done';
-import { rightIsInRole, isAdmin } from "../../Helpers/RightsGestion";
+import { isAdmin, hasRight } from "../../../Helpers/RightsGestion";
 
-class Administration extends React.Component {
+class AdministrationTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,22 +62,22 @@ class Administration extends React.Component {
                                 <div>
                                     <LockOpenIcon style={{ marginRight: "15px", fontSize: "25px", position: "relative", top: "5px", left: "5px" }} />
                                     {
-                                        rightIsInRole(this.state.rights, "manage_events") ? (
+                                        hasRight("manage_events") ? (
                                             <Chip avatar={<DoneIcon />} label="Gestion des évènements" style={{ marginRight: "10px" }} />
                                         ) : ""
                                     }
                                     {
-                                        rightIsInRole(this.state.rights, "manage_members") ? (
+                                        hasRight("manage_members") ? (
                                             <Chip avatar={<DoneIcon />} label="Gestion des membres" style={{ marginRight: "10px" }} />
                                         ) : ""
                                     }
                                     {
-                                        rightIsInRole(this.state.rights, "manage_sinisters") ? (
+                                        hasRight("manage_sinisters") ? (
                                             <Chip avatar={<DoneIcon />} label="Gestion des sinistres" style={{ marginRight: "10px" }} />
                                         ) : ""
                                     }
                                     {
-                                        rightIsInRole(this.state.rights, "manage_partitions") ? (
+                                        hasRight("manage_partitions") ? (
                                             <Chip avatar={<DoneIcon />} label="Gestion des partitions" style={{ marginRight: "10px" }} />
                                         ) : ""
                                     }
@@ -91,4 +91,4 @@ class Administration extends React.Component {
     }
 }
 
-export default Administration; 
+export default AdministrationTab; 

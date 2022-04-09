@@ -1,6 +1,6 @@
 import React from "react";
 import { Paper, Alert, createTheme, Button } from "@mui/material";
-import HorizontalNonLinearStepper from "../../components/User/CustomizedStepper";
+import CustomizedStepper from "../../components/User/CustomizedStepper";
 import ClientContactForm from "../../components/Event/forms/ClientContactForm";
 import GeneralDataForm from "../../components/Event/forms/GeneralDataForm";
 import LogisticProgramForm from "../../components/Event/forms/LogicsticProgramForm";
@@ -354,7 +354,7 @@ class AddEventPage extends React.Component {
                             }
                         </div>
                         <div style={{ marginLeft: "5%", marginRight: "5%" }}>
-                            <HorizontalNonLinearStepper
+                            <CustomizedStepper
                                 steps={steps}
                                 currentStep={currentComponentId}
                                 completed={componentComplete}

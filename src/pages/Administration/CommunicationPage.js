@@ -11,7 +11,16 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete } from "@mui/material";
 import "../../App.css";
 import "../../styles/communication.css";
-import { GreenButton } from "../../components/General/StyledComponents/StyledComponents";
+import { GreenButton } from "../../components/General/StyledComponents/StyledButtons";
+import { useLocation } from "react-router-dom";
+
+function withMyHook(Component) {
+    return function WrappedComponent(props) {
+        const location = useLocation();
+        const hookValue = location.state;
+        return <Component {...props} myHookValue={hookValue} />;
+    }
+}
 
 class CommunicationPage extends React.Component {
     constructor(props) {
@@ -19,7 +28,7 @@ class CommunicationPage extends React.Component {
         this.state = {
             musicalFormations: [],
             events: [],
-            users: [], 
+            users: [],
             musicalFormation: "",
             event: "",
             presences: [
@@ -167,8 +176,8 @@ class CommunicationPage extends React.Component {
                                     disableCloseOnSelect
                                     getOptionLabel={(option) => option.firstName + " " + option.lastName}
                                     renderOption={(props, option, { selected }) => (
-                                        <li {...props} 
-                                        key={option.id}>
+                                        <li {...props}
+                                            key={option.id}>
                                             <Checkbox
                                                 icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                                 checkedIcon={<CheckBoxIcon fontSize="small" />}
@@ -348,4 +357,4 @@ class CommunicationPage extends React.Component {
     }
 }
 
-export default CommunicationPage; 
+export default withMyHook(CommunicationPage); 

@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import { Navigate } from 'react-router-dom';
 import { confirmProfile, modifyCurrentUserImageDiffusionAuthorization } from '../../../GraphQL/mutations/UserMutations';
 
-class ImageRightForm extends React.Component {
+class ImageRightInitialization extends React.Component {
     constructor(props) {
         super(props);
 
@@ -112,4 +112,4 @@ class ImageRightForm extends React.Component {
     }
 }
 
-export default ImageRightForm; 
+export default ImageRightInitialization; 

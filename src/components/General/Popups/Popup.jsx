@@ -11,7 +11,7 @@ export default function Popup(props) {
   const primaryButton = {
     color: "#ffffff",
     background: "red",
-    opacity: "0.7",
+    opacity: "0.9",
     borderColor: "#f6b93b",
     float: "right",
     marginLeft: "50px",
@@ -38,7 +38,7 @@ export default function Popup(props) {
               color="inherit"
               onClick={() => props.parentCallback("")}
             >
-              <CloseIcon sx={{ color: blue[100] }} />
+              <CloseIcon sx={{ color: "white" }} />
             </Button>) : ""
           }
         </div>

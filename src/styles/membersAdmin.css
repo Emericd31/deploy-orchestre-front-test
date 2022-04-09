@@ -3,24 +3,42 @@
         margin: 0 0 10px 10px;
     }
     .arrow {
-        background-color: gray;
+        background-color: #1E70B7;
         height: 50px;
     }
     .body .usersTab .tabHeader {
         display: none;
     }
-  }
 
-  .contentTab {
-      text-align: center;
-  }
+    .contentTab {
+        text-align: center;
+    }
+    #buttons {
+        padding-top: 8px;
+    }
+}
 
-  .tabHeader {
-      background-color: #1E70B7;
-      color: white;
-      font-weight: bold;
-  }
+@media only screen and (min-width: 1200px) {
+    .contentTab {
+        text-align: left;
+        padding-left: 50px;
+    }
 
-  .button + .button {
-      margin-left: 10px;
-  }
+    #buttons {
+        padding-top: 2px;
+    }
+}
+
+.titleTab {
+    text-align: center;
+}
+
+.tabHeader {
+    background-color: #1E70B7;
+    color: white;
+    font-weight: bold;
+}
+
+.button + .button {
+    margin-left: 10px;
+}

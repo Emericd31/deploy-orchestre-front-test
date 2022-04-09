@@ -29,6 +29,13 @@ export var getUsers = async function () {
         email
         firstName
         lastName
+        mobileNumber
+        userRights {
+          right {
+            id
+            name
+          }
+        }
       }
     }
   `;
@@ -165,4 +172,34 @@ export var getMyRights = async function () {
     }
   `;
   return await serverClient.request(query);
-}; 
+};
+
+export var getRightsByUserId = async function (userId) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const variable = {
+    userId: userId,
+  };
+  const query = gql`
+    query rightsByUserId($userId: Int!) {
+      rightsByUserId(userId: $userId) {
+        name
+      }
+    }
+  `;
+  return await serverClient.request(query, variable);
+};
+
+export var getAllRights = async function () {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const query = gql`
+    query allRights {
+      allRights {
+        id
+        name
+      }
+    }
+  `;
+  return await serverClient.request(query);
+}

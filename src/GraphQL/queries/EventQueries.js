@@ -73,7 +73,7 @@ export var getMyPresence = async function (eventId) {
 export var getPresence = async function (eventId) {
   const variable = {
     eventId: eventId
-  }; 
+  };
   const query = gql`
     query presence($eventId: Int!) {
       presence(eventId: $eventId) {
@@ -84,13 +84,13 @@ export var getPresence = async function (eventId) {
       }
     }
   `;
-  const token = localStorage.getItem("Token"); 
+  const token = localStorage.getItem("Token");
   const requestHeaders = {
-    authorization: "Bearer " + token 
-  }; 
+    authorization: "Bearer " + token
+  };
 
-  const data = await serverClient.request(query, variable, requestHeaders); 
-  return data; 
+  const data = await serverClient.request(query, variable, requestHeaders);
+  return data;
 }
 
 export var getEventNames = async function () {
@@ -105,11 +105,39 @@ export var getEventNames = async function () {
       }
     }  
   `;
-  const token = localStorage.getItem("Token"); 
+  const token = localStorage.getItem("Token");
   const requestHeaders = {
     authorization: "Bearer " + token
-  }; 
+  };
 
-  const data = await serverClient.request(query, variable, requestHeaders); 
-  return data; 
+  const data = await serverClient.request(query, variable, requestHeaders);
+  return data;
+}
+
+export var getUsersAndPresencesByEvent = async function (eventId) {
+  const variable = {
+    eventId: eventId
+  };
+  const query = gql`
+    query usersAndPresencesByEvent($eventId: Int!) {
+      usersAndPresencesByEvent(eventId: $eventId) {
+        resultat {
+          item1 {
+            id
+            firstName
+            lastName
+          } item2 {
+            presence
+          }
+        }
+      }
+    }
+  `;
+  const token = localStorage.getItem("Token");
+  const requestHeaders = {
+    authorization: "Bearer " + token
+  };
+
+  const data = await serverClient.request(query, variable, requestHeaders);
+  return data;
 }

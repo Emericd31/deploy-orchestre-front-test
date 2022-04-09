@@ -157,7 +157,7 @@ export var modifyCurrentUserInfo = async function (firstName, lastName, birthday
   return await serverClient.request(mutation, variable);
 };
 
-export var modifyCurrentUserHealthData = async function (bloodTypeId, socialSecurityNumber, medicalTreatment, foodAllergy, drugAllergy, asthma, 
+export var modifyCurrentUserHealthData = async function (bloodTypeId, socialSecurityNumber, medicalTreatment, foodAllergy, drugAllergy, asthma,
   allergies, healthProblems, medicalDevices, referringDoctorFirstname, referringDoctorLastname, referringDoctorMobileNumber) {
   const token = localStorage.getItem("Token");
   const variable = {
@@ -169,9 +169,9 @@ export var modifyCurrentUserHealthData = async function (bloodTypeId, socialSecu
     asthma: asthma,
     allergies: allergies,
     healthProblems: healthProblems,
-    medicalDevices: medicalDevices, 
-    referringDoctorFirstname: referringDoctorFirstname, 
-    referringDoctorLastname: referringDoctorLastname, 
+    medicalDevices: medicalDevices,
+    referringDoctorFirstname: referringDoctorFirstname,
+    referringDoctorLastname: referringDoctorLastname,
     referringDoctorMobileNumber: referringDoctorMobileNumber
   };
   const mutation = gql`
@@ -192,10 +192,10 @@ export var modifyCurrentUserHealthData = async function (bloodTypeId, socialSecu
 }
 
 export var modifyCurrentUserImageDiffusionAuthorization = async function (authorization) {
-  const token = localStorage.getItem("Token"); 
+  const token = localStorage.getItem("Token");
   const variable = {
     authorization: authorization
-  }; 
+  };
   const mutation = gql`
     mutation modifyCurrentUserImageDiffusionAuthorization($authorization: Boolean!) {
       modifyCurrentUserImageDiffusionAuthorization(authorization: $authorization) {
@@ -204,7 +204,43 @@ export var modifyCurrentUserImageDiffusionAuthorization = async function (author
       }
     }
   `;
-  return await serverClient.request(mutation, variable); 
+  return await serverClient.request(mutation, variable);
+}
+
+export var assignRightToUser = async function (idUser, idRight) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const variable = {
+    idUser: idUser,
+    idRight: idRight
+  };
+  const mutation = gql`
+    mutation assignRightToUser($idUser: Int!, $idRight: Int!) {
+      assignRightToUser(idUser: $idUser, idRight: $idRight) {
+        statusCode
+        message
+      }
+    }
+  `;
+  return await serverClient.request(mutation, variable);
+}
+
+export var removeRightFromUser = async function (idUser, idRight) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const variable = {
+    idUser: idUser,
+    idRight: idRight
+  };
+  const mutation = gql`
+    mutation removeRightFromUser($idUser: Int!, $idRight: Int!) {
+      removeRightFromUser(idUser: $idUser, idRight: $idRight) {
+        statusCode
+        message
+      }
+    }
+  `;
+  return await serverClient.request(mutation, variable);
 }
 
 export var confirmProfile = async function () {

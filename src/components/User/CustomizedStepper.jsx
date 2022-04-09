@@ -4,7 +4,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 
-export default function HorizontalNonLinearStepper(props) {
+export default function CustomizedStepper(props) {
 
   const handleStep = (step) => () => {
     if (props.completed[step] === true || (props.completed[props.currentStep] === true && step === (props.currentStep + 1))) {

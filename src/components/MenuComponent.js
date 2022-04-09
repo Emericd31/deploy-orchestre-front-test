@@ -109,7 +109,12 @@ export default function MenuComponent(props) {
       setSelectedItem("dressing");
       setTitle("Vestiaire");
       setAdministrationListOpen(false);
-    } else if (currentUrl.includes("claims")) {
+    } else if (currentUrl.includes("claimsGestion")) {
+      setSelectedItem("manageSinisters");
+      setTitle("Gestion des sinistres");
+      setAdministrationListOpen(true);
+    }
+    else if (currentUrl.includes("claims")) {
       setSelectedItem("claims");
       setTitle("Sinistres");
       setAdministrationListOpen(false);

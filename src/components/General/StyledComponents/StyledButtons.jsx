@@ -1,5 +1,7 @@
 import { Button } from "@mui/material";
-import { styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
+import { green } from '@mui/material/colors';
+import Switch from '@mui/material/Switch';
 
 export const GreenButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -30,5 +32,17 @@ export const OrangeButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#FF9100",
   '&:hover': {
       backgroundColor: "#C16F02",
+  },
+}));
+
+export const GreenSwitch = styled(Switch)(({ theme }) => ({
+  '& .MuiSwitch-switchBase.Mui-checked': {
+    color: green[600],
+    '&:hover': {
+      backgroundColor: alpha(green[600], theme.palette.action.hoverOpacity),
+    },
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    backgroundColor: green[600],
   },
 }));

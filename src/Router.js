@@ -4,7 +4,7 @@ import LoginPage from './pages/User/LoginPage';
 import NotFoundPage from './pages/General/NotFoundPage';
 import NewProfilePage from './pages/User/NewProfilePage';
 import jwt_decode from "jwt-decode";
-import { getInitializedProfileCurrentUser, getMyRights } from './GraphQL/queries/UserQueries';
+import { getInitializedProfileCurrentUser } from './GraphQL/queries/UserQueries';
 import ProfileCompletedPage from './pages/User/ProfileCompleted';
 import EventPage from './pages/Event/EventPage';
 import BoardPage from './pages/Board/BoardPage';
@@ -13,7 +13,7 @@ import EventDetailsPage from "./pages/Event/EventDetailsPage";
 import MyAccountPage from "./pages/User/MyAccountPage";
 import AddEventPage from "./pages/Event/AddEventPage";
 import ConstructionPage from './pages/General/ConstructionPage';
-import { rightIsInRole } from './Helpers/RightsGestion';
+import { hasRight } from './Helpers/RightsGestion';
 import App from './App';
 import CommunicationPage from './pages/Administration/CommunicationPage';
 import MembersAdministrationPage from './pages/Administration/MembersAdministrationPage';
@@ -68,14 +68,14 @@ function NewProfileRoute(props) {
 }
 
 function AuthEventGestion(props) {
-  if (!rightIsInRole(props.myRights, "manage_events")) {
+  if (!hasRight("manage_events")) {
     return <Navigate to="/events" />
   }
   return props.children;
 }
 
 function AuthMembersGestion(props) {
-  if (!rightIsInRole(props.myRights, "manage_members")) {
+  if (!hasRight("manage_members")) {
     return <Navigate to="/board" />
   }
   return props.children;
@@ -91,20 +91,12 @@ function RedirectToHome({ children }) {
   return children
 }
 
-function UpdateRightsBoard(props) {
-  if (props.myRights.length === 0) {
-    props.callback();
-  }
-  return props.children;
-}
-
 class MainRouter extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       loaded: false,
-      initializedProfile: false,
-      myRights: []
+      initializedProfile: false
     }
   }
 
@@ -115,21 +107,11 @@ class MainRouter extends React.Component {
     }
     this.setState({ loaded: false })
     if (isAuthenticated()) {
-      getMyRights().then((res) => {
-        getInitializedProfileCurrentUser().then((resInitialized) => {
-          this.setState({ myRights: res.myRights, initializedProfile: resInitialized.currentUser.initializedProfile, loaded: true });
-        });
-      })
+      getInitializedProfileCurrentUser().then((resInitialized) => {
+        this.setState({ initializedProfile: resInitialized.currentUser.initializedProfile, loaded: true });
+      });
     } else {
       this.setState({ loaded: true })
-    }
-  }
-
-  updateRights() {
-    if (isAuthenticated()) {
-      getMyRights().then((res) => {
-        this.setState({ myRights: res.myRights });
-      })
     }
   }
 
@@ -140,18 +122,18 @@ class MainRouter extends React.Component {
           <HashRouter forceRefresh={false} >
             <Routes>
               <Route path='/signin' element={<RedirectToHome><LoginPage /></RedirectToHome>} />
-                <Route exact path='/verify/:token' element={<MailValidationPage />} />
+              <Route exact path='/verify/:token' element={<MailValidationPage />} />
               <Route path='/newprofile' element={<NewProfileRoute><NewProfilePage /></NewProfileRoute>} />
               <Route path="/" element={<AuthRoute><App /></AuthRoute>}>
-                <Route path='/membersGestion' element={<AuthMembersGestion myRights={this.state.myRights}><MembersAdministrationPage /></AuthMembersGestion>} />
-                <Route path='/add/user' element={<AuthMembersGestion myRights={this.state.myRights}><AddMemberPage /></AuthMembersGestion>} />
+                <Route path='/membersGestion' element={<AuthMembersGestion><MembersAdministrationPage /></AuthMembersGestion>} />
+                <Route path='/add/user' element={<AuthMembersGestion><AddMemberPage /></AuthMembersGestion>} />
                 <Route path='/profileCompleted' element={<ProfileCompletedPage />} />
-                <Route path="board" element={<UpdateRightsBoard callback={() => this.updateRights()} myRights={this.state.myRights}><BoardPage myRights={this.state.myRights} /></UpdateRightsBoard>} />
+                <Route path="board" element={<BoardPage />} />
                 <Route path='/myaccount' element={<MyAccountPage />} />
                 <Route path='/events' element={<EventPage />} />
-                <Route path='/eventsGestion' element={<AuthEventGestion myRights={this.state.myRights}><EventPageGestion /></AuthEventGestion>} />
-                <Route path='/add/event' element={<AuthEventGestion myRights={this.state.myRights}><AddEventPage /></AuthEventGestion>} />
-                <Route path='/eventDetails/:eventId' element={<EventDetailsPage admin={rightIsInRole(this.state.myRights, "manage_events")} />} />
+                <Route path='/eventsGestion' element={<AuthEventGestion><EventPageGestion /></AuthEventGestion>} />
+                <Route path='/add/event' element={<AuthEventGestion><AddEventPage /></AuthEventGestion>} />
+                <Route path='/eventDetails/:eventId' element={<EventDetailsPage admin={hasRight("manage_events")} />} />
                 <Route path='/partitions' element={<ConstructionPage />} />
                 <Route path='/allowance' element={<ConstructionPage />} />
                 <Route path='/dressing' element={<ConstructionPage />} />

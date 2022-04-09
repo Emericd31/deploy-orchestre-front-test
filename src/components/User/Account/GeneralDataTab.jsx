@@ -1,6 +1,4 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import { styled } from '@mui/material/styles';
 import { Grid, IconButton, Collapse } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -11,19 +9,12 @@ import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import Popup from "../General/Popups/Popup";
-import { getPersonalData } from '../../GraphQL/queries/UserQueries';
-import { getDayNumbersMonthLettersYearNumbers } from '../../Helpers/DateGestion';
+import Popup from "../../General/Popups/Popup";
+import { getPersonalData } from '../../../GraphQL/queries/UserQueries';
+import { getDayNumbersMonthLettersYearNumbers } from '../../../Helpers/DateGestion';
+import { GreenButton } from "../../General/StyledComponents/StyledButtons";
 
-const GreenButton = styled(Button)(({ theme }) => ({
-    color: "white",
-    backgroundColor: "#00AF06",
-    '&:hover': {
-        backgroundColor: "#009205",
-    },
-}));
-
-class GeneralData extends React.Component {
+class GeneralDataTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -77,7 +68,7 @@ class GeneralData extends React.Component {
                             <Grid item lg={4} md={6} xs={12}>
                                 <PhoneOutlinedIcon style={{ float: "left", marginRight: "10px" }} />
                                 <p style={{ marginTop: "2px", marginBottom: "15px" }}>
-                                    {[this.state.user.phoneNumber.slice(0, 2), this.state.user.phoneNumber.slice(2, 4), this.state.user.phoneNumber.slice(4, 6), this.state.user.phoneNumber.slice(6, 8), this.state.user.phoneNumber.slice(8, 10)].join(' ')}
+                                    {this.state.user.phoneNumber !== "" ? ([this.state.user.phoneNumber.slice(0, 2), this.state.user.phoneNumber.slice(2, 4), this.state.user.phoneNumber.slice(4, 6), this.state.user.phoneNumber.slice(6, 8), this.state.user.phoneNumber.slice(8, 10)].join(' ')) : ("non renseigné")}
                                 </p>
                             </Grid>
                             <Grid item lg={4} md={6} xs={12}>
@@ -100,7 +91,7 @@ class GeneralData extends React.Component {
                             <Grid item lg={4} md={6} xs={12}>
                                 <PhoneIphoneIcon style={{ float: "left", marginRight: "10px" }} />
                                 <p style={{ marginTop: "2px" }}>
-                                    {[this.state.user.mobileNumber.slice(0, 2), this.state.user.mobileNumber.slice(2, 4), this.state.user.mobileNumber.slice(4, 6), this.state.user.mobileNumber.slice(6, 8), this.state.user.mobileNumber.slice(8, 10)].join(' ')}
+                                    {this.state.user.mobileNumber !== "" ? ([this.state.user.mobileNumber.slice(0, 2), this.state.user.mobileNumber.slice(2, 4), this.state.user.mobileNumber.slice(4, 6), this.state.user.mobileNumber.slice(6, 8), this.state.user.mobileNumber.slice(8, 10)].join(' ')) : ("non renseigné")}
                                 </p>
                             </Grid>
                             <Grid item lg={4} md={6} xs={12}>
@@ -130,4 +121,4 @@ class GeneralData extends React.Component {
     }
 }
 
-export default GeneralData; 
+export default GeneralDataTab; 

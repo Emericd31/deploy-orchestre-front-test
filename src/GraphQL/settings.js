@@ -6,4 +6,6 @@ import { GraphQLClient } from "graphql-request";
 // Last online
 export const serverClient = new GraphQLClient("https://deploy-orchestre-api-test.herokuapp.com/graphql/");
 
-//export const serverClient = new GraphQLClient("http://localhost:5003/graphql");
+// export const serverClient = new GraphQLClient("http://localhost:5003/graphql");
+
+export const superUserEmail = "admin@admin.com"
