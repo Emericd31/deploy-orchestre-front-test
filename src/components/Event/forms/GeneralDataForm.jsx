@@ -14,6 +14,8 @@ import { Select } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { Button } from "@mui/material";
 import { getMusicalFormations } from "../../../GraphQL/queries/EventQueries";
+import { getEventTypes } from '../../../GraphQL/queries/EventTypeQueries';
+import frLocale from "date-fns/locale/fr";
 
 const emailRegexSafe = require("email-regex-safe");
 
@@ -35,15 +37,19 @@ class GeneralData extends React.Component {
             tempMusicalFormation: props.event.musicalFormation,
             musicalFormation: "",
             eventType: props.event.eventType,
+            valueEventType: props.event.valueEventType,
             musicalFormations: [],
-            eventTypes: [{ id: 0, value: "Mariage" }, { id: 1, value: "Anniversaire" }],
+            eventTypes: [],
+            isLoading: true,
         };
     }
 
     componentDidMount() {
         getMusicalFormations().then((res) => {
-            this.setState({ musicalFormations: res.musicalFormations, musicalFormation: this.state.tempMusicalFormation }, () => {
-                this.checkRequiredFields();
+            getEventTypes().then((res2) => {
+                this.setState({ eventTypes: res2.eventTypes, musicalFormations: res.musicalFormations, musicalFormation: this.state.tempMusicalFormation, isLoading: false }, () => {
+                    this.checkRequiredFields();
+                });
             });
         });
     }
@@ -66,14 +72,17 @@ class GeneralData extends React.Component {
 
     handleDateChange = (itemName, date) => {
         this.setState({ [itemName]: date });
+        if (itemName == "startDate") {
+            this.setState({ ["endDate"]: date });
+        }
     };
 
     checkRequiredFields() {
         let intituleValid = this.state.intitule !== "";
-        let addressValid = this.state.address !== "";
         let postalCodeValid = this.state.postalCode !== "" && this.postalCodeSyntaxCheck(this.state.postalCode);
         let cityValid = this.state.city !== "";
         let eventTypeValid = this.state.eventType !== "";
+        let valueEventTypeValid = (this.state.eventType === "Autres" && this.state.valueEventType !== "") || this.state.eventType !== "Autres";
         let musicalFormationValid = this.state.musicalFormation !== "";
         let phoneNumberValid = this.state.phoneNumber === "" || this.phoneSyntaxCheck(this.state.phoneNumber);
         let mobileNumberValid = this.state.mobileNumber === "" || this.phoneSyntaxCheck(this.state.mobileNumber);
@@ -82,13 +91,13 @@ class GeneralData extends React.Component {
         let currentFieldsAreValid = this.state.fieldsAreValid;
         let checkValidity =
             intituleValid &&
-            addressValid &&
             postalCodeValid &&
             cityValid &&
             phoneNumberValid &&
             mobileNumberValid &&
             emailValid &&
             eventTypeValid &&
+            valueEventTypeValid &&
             musicalFormationValid;
 
         if ((currentFieldsAreValid && !checkValidity) || (!currentFieldsAreValid && checkValidity)) {
@@ -130,251 +139,246 @@ class GeneralData extends React.Component {
             eventMobileNumber: this.state.mobileNumber,
             eventEmail: this.state.email,
             musicalFormation: this.state.musicalFormation,
-            eventType: this.state.eventType
+            eventType: this.state.eventType, 
+            valueEventType: this.state.valueEventType
         };
         this.props.functionCallback(event);
     }
 
+    localeMap = {
+        fr: frLocale
+    };
+
     render() {
         return (
-            <div>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginRight: "1%",
-                        marginTop: "1%",
-                        paddingBottom: "1%",
-                    }}
-                >
-                    <h1>Informations Générales : </h1>
-                </div>
-                <p>* champs obligatoires</p>
+            !this.state.isLoading ? (
+                <div>
+                    <h1 style={{ textAlign: "center" }}>Informations Générales</h1>
+                    <p>* champs obligatoires</p>
 
-                <Grid container spacing={3} style={{ textAlign: "center" }}>
-                    <Grid item xs={12}>
-                        <BriefedTextField
-                            id={"intitule-field"}
-                            label="Intitulé"
-                            type="text"
-                            name="text"
-                            required={true}
-                            value={this.state.intitule}
-                            saveField={(input, errorState) =>
-                                this.updateField("intitule", input, errorState)
-                            }
-                        />
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={6}
-                    >
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="musical_formation_label">
-                                Formation musicale concernée *
-                            </InputLabel>
-                            <Select
-                                id="type"
-                                labelId="musical_formation_label"
-                                label="Formation musicale concernée *"
-                                value={this.state.musicalFormation}
-                                onChange={(event) =>
-                                    this.updateSelect("musicalFormation", event.target.value)
+                    <Grid container spacing={3} style={{ textAlign: "center" }}>
+                        <Grid item xs={12}>
+                            <BriefedTextField
+                                id={"intitule-field"}
+                                label="Intitulé"
+                                type="text"
+                                name="text"
+                                required={true}
+                                value={this.state.intitule}
+                                saveField={(input, errorState) =>
+                                    this.updateField("intitule", input, errorState)
                                 }
-                            >
-                                {this.state.musicalFormations.map((musicalFormation) => (
-                                    <MenuItem key={musicalFormation.id} value={musicalFormation.id}>
-                                        {musicalFormation.value}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={6}
-                    >
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="event_type_label">
-                                Type d'évènement *
-                            </InputLabel>
-                            <Select
-                                id="type"
-                                labelId="event_type_label"
-                                label="Type d'évènement *"
-                                value={this.state.eventType}
-                                onChange={(event) =>
-                                    this.updateSelect("eventType", event.target.value)
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel id="musical_formation_label">
+                                    Formation musicale concernée *
+                                </InputLabel>
+                                <Select
+                                    id="type"
+                                    labelId="musical_formation_label"
+                                    label="Formation musicale concernée *"
+                                    value={this.state.musicalFormation}
+                                    onChange={(event) =>
+                                        this.updateSelect("musicalFormation", event.target.value)
+                                    }
+                                >
+                                    {this.state.musicalFormations.map((musicalFormation) => (
+                                        <MenuItem key={musicalFormation.id} value={musicalFormation.id}>
+                                            {musicalFormation.value}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={this.state.eventType === "Autres" ? 3 : 6}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel id="event_type_label">
+                                    Type d'évènement *
+                                </InputLabel>
+                                <Select
+                                    id="type"
+                                    labelId="event_type_label"
+                                    label="Type d'évènement *"
+                                    value={this.state.eventType}
+                                    onChange={(event) =>
+                                        this.updateSelect("eventType", event.target.value)
+                                    }
+                                >
+                                    {this.state.eventTypes.map((type) => (
+                                        <MenuItem key={type.value} value={type.value}>
+                                            {type.value}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
+                        {
+                            this.state.eventType === "Autres" ? (
+                                <Grid item
+                                    lg={3}
+                                    xs={12}>
+                                    <BriefedTextField
+                                        id={"address-field"}
+                                        label="Type d'évènement"
+                                        type="text"
+                                        name="text"
+                                        required={true}
+                                        value={this.state.valueEventType}
+                                        saveField={(input, errorState) =>
+                                            this.updateField("valueEventType", input, errorState)
+                                        }
+                                    />
+                                </Grid>
+                            ) : ""
+                        }
+
+                        <Grid item xs={12} md={6}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
+                                <DateTimePicker
+                                    renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
+                                    label="Date et heure de début"
+                                    DateTimeFormat={Intl.DateTimeFormat}
+                                    locale='fr'
+                                    value={this.state.startDate}
+                                    onChange={(event) => this.handleDateChange("startDate", event)}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
+                                <DateTimePicker
+                                    DateTimeFormat={Intl.DateTimeFormat}
+                                    locale={"fr"}
+                                    renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
+                                    label="Date et heure de fin"
+                                    value={this.state.endDate}
+                                    onChange={(event) => this.handleDateChange("endDate", event)}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <BriefedTextField
+                                id={"address-field"}
+                                label="Adresse de l'évènement"
+                                type="text"
+                                name="text"
+                                required={false}
+                                value={this.state.address}
+                                saveField={(input, errorState) =>
+                                    this.updateField("address", input, errorState)
                                 }
-                            >
-                                {this.state.eventTypes.map((type) => (
-                                    <MenuItem key={type.id} value={type.id}>
-                                        {type.value}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                                renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
-                                label="Date et heure de début"
-                                value={this.state.startDate}
-                                onChange={(event) => this.handleDateChange("startDate", event)}
                             />
-                        </LocalizationProvider>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                                renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
-                                label="Date et heure de fin"
-                                value={this.state.endDate}
-                                onChange={(event) => this.handleDateChange("endDate", event)}
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <BriefedTextField
+                                id={"addressComplement-field"}
+                                label="Complément"
+                                type="text"
+                                name="text"
+                                value={this.state.addressComplement}
+                                saveField={(input, errorState) =>
+                                    this.updateField("addressComplement", input, errorState)
+                                }
                             />
-                        </LocalizationProvider>
-                    </Grid>
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={3}>
+                            <LiveBriefedTextField
+                                id={"postalCode-field"}
+                                label="Code Postal"
+                                type="text"
+                                required={true}
+                                value={this.state.postalCode}
+                                helperText="La syntaxe du code postal n'est pas valide."
+                                saveField={(input, errorState) =>
+                                    this.updateField("postalCode", input, errorState)
+                                }
+                                syntaxChecker={this.postalCodeSyntaxCheck}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={9}>
+                            <BriefedTextField
+                                id={"city-field"}
+                                label="Ville"
+                                type="text"
+                                name="text"
+                                required={true}
+                                value={this.state.city}
+                                saveField={(input, errorState) =>
+                                    this.updateField("city", input, errorState)
+                                }
+                            />
+                        </Grid>
 
-                    <Grid item xs={6}>
-                        <BriefedTextField
-                            id={"address-field"}
-                            label="Adresse de l'évènement"
-                            type="text"
-                            name="text"
-                            required={true}
-                            value={this.state.address}
-                            saveField={(input, errorState) =>
-                                this.updateField("address", input, errorState)
-                            }
-                        />
+                        <Grid item xs={12} md={6} lg={3}>
+                            <LiveBriefedTextField
+                                id={"phoneNumber-field"}
+                                label="Téléphone Fixe"
+                                type="text"
+                                required={false}
+                                value={this.state.phoneNumber}
+                                helperText="La syntaxe du numéro de téléphone n'est pas valide."
+                                saveField={(input, errorState) =>
+                                    this.updateField("phoneNumber", input, errorState)
+                                }
+                                syntaxChecker={this.phoneSyntaxCheck}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={3}>
+                            <LiveBriefedTextField
+                                id={"mobileNumber-field"}
+                                label="Téléphone Mobile"
+                                type="text"
+                                required={false}
+                                value={this.state.mobileNumber}
+                                helperText="La syntaxe du numéro de téléphone n'est pas valide."
+                                saveField={(input, errorState) =>
+                                    this.updateField("mobileNumber", input, errorState)
+                                }
+                                syntaxChecker={this.phoneSyntaxCheck}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <LiveBriefedTextField
+                                id={"email-field"}
+                                label="Adresse mail"
+                                type="email"
+                                required={false}
+                                value={this.state.email}
+                                helperText="La syntaxe de l'e-mail n'est pas valide."
+                                saveField={(input, errorState) =>
+                                    this.updateField("email", input, errorState)
+                                }
+                                syntaxChecker={this.emailSyntaxCheck}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid
-                        item
-                        xs={6}
-                    >
-                        <BriefedTextField
-                            id={"addressComplement-field"}
-                            label="Complément"
-                            type="text"
-                            name="text"
-                            value={this.state.addressComplement}
-                            saveField={(input, errorState) =>
-                                this.updateField("addressComplement", input, errorState)
-                            }
-                        />
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={3}
-                    >
-                        <LiveBriefedTextField
-                            id={"postalCode-field"}
-                            label="Code Postal"
-                            type="text"
-                            required={true}
-                            value={this.state.postalCode}
-                            helperText="La syntaxe du code postal n'est pas valide."
-                            saveField={(input, errorState) =>
-                                this.updateField("postalCode", input, errorState)
-                            }
-                            syntaxChecker={this.postalCodeSyntaxCheck}
-                        />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={9}
-                    >
-                        <BriefedTextField
-                            id={"city-field"}
-                            label="Ville"
-                            type="text"
-                            name="text"
-                            required={true}
-                            value={this.state.city}
-                            saveField={(input, errorState) =>
-                                this.updateField("city", input, errorState)
-                            }
-                        />
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={3}
-                    >
-                        <LiveBriefedTextField
-                            id={"phoneNumber-field"}
-                            label="Téléphone Fixe"
-                            type="text"
-                            required={false}
-                            value={this.state.phoneNumber}
-                            helperText="La syntaxe du numéro de téléphone n'est pas valide."
-                            saveField={(input, errorState) =>
-                                this.updateField("phoneNumber", input, errorState)
-                            }
-                            syntaxChecker={this.phoneSyntaxCheck}
-                        />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={3}
-                    >
-                        <LiveBriefedTextField
-                            id={"mobileNumber-field"}
-                            label="Téléphone Mobile"
-                            type="text"
-                            required={false}
-                            value={this.state.mobileNumber}
-                            helperText="La syntaxe du numéro de téléphone n'est pas valide."
-                            saveField={(input, errorState) =>
-                                this.updateField("mobileNumber", input, errorState)
-                            }
-                            syntaxChecker={this.phoneSyntaxCheck}
-                        />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={6}
-                    >
-                        <LiveBriefedTextField
-                            id={"email-field"}
-                            label="Adresse mail"
-                            type="email"
-                            required={false}
-                            value={this.state.email}
-                            helperText="La syntaxe de l'e-mail n'est pas valide."
-                            saveField={(input, errorState) =>
-                                this.updateField("email", input, errorState)
-                            }
-                            syntaxChecker={this.emailSyntaxCheck}
-                        />
-                    </Grid>
-                </Grid>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        marginTop: "20px",
-                        paddingBottom: "20px"
-                    }}
-                >
-                    <Button
-                        disabled={!this.state.fieldsAreValid}
-                        onClick={() => this.saveEventInfo()}
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#1876D2"
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            marginTop: "20px",
+                            paddingBottom: "20px"
                         }}
                     >
-                        Suivant
-                    </Button>
+                        <Button
+                            disabled={!this.state.fieldsAreValid}
+                            onClick={() => this.saveEventInfo()}
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#1876D2"
+                            }}
+                        >
+                            Suivant
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            ) : ""
         );
     }
 }

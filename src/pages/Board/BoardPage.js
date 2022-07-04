@@ -7,11 +7,14 @@ import { getDayNumbersMonthLettersYearNumbers, getHours } from "../../Helpers/Da
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GreenButton } from "../../components/General/StyledComponents/StyledButtons";
 import "../../App.css";
-import "../../styles/board.css";
-import { Grid } from "@mui/material";
+import "../../styles/board.scss";
+import { Grid, TextField } from "@mui/material";
 import { Link as LinkRouter } from "react-router-dom";
-import { hasRight } from '../../Helpers/RightsGestion';
 import { getActualities } from "../../GraphQL/queries/ActualityQueries";
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import frLocale from "date-fns/locale/fr";
 
 class BoardPage extends React.Component {
     constructor(props) {
@@ -99,12 +102,25 @@ class BoardPage extends React.Component {
                                     <div className="calendar">
                                         <Calendar style={{ width: "25%" }} callBack={(newValue) => this.setCurrentDate(newValue)} />
                                     </div>
+                                    <div className="calendarMobile">
+                                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
+                                            <MobileDatePicker
+                                                sx={{ width: "80%" }}
+                                                label=""
+                                                value={this.state.currentDate}
+                                                onChange={(newValue) => {
+                                                    this.setCurrentDate(newValue);
+                                                }}
+                                                renderInput={(params) => <TextField {...params} fullWidth  />}
+                                            />
+                                        </LocalizationProvider>
+                                    </div>
                                 </div>
                                 {
                                     this.state.events.length > 0 ? (
                                         <>
-                                            <div className="item-two" style={{ overflowX: "hidden" }}>
-                                                <Grid container style={{ marginLeft: "20px" }}>
+                                            <div className="item-two" sx={{ overflowX: "hidden" }}>
+                                                <Grid className="entetes" container style={{ paddingLeft: "20px" }}>
                                                     <Grid item lg={4} md={6} xs={12}>
                                                         <p>Intitulé</p>
                                                     </Grid>
@@ -121,17 +137,17 @@ class BoardPage extends React.Component {
                                                 {
                                                     this.state.events.filter(event => this.isMoreRecent(event.startDate)).sort((a, b) => this.compareDate(a, b)).map(event => {
                                                         return (
-                                                            <Grid container key={event.id} style={{ border: "1px solid #E0E0E0" }}>
-                                                                <Grid item lg={4} md={6} xs={12}>
-                                                                    <p style={{ paddingLeft: "10px" }}>{event.entitled}</p>
+                                                            <Grid className="eventItem" container key={event.id} style={{ alignItems:"baseline"}}>
+                                                                <Grid item lg={4} md={6} xs={12} component={LinkRouter} to={'/eventDetails/' + event.id} sx={{ textDecoration: "none", color: "black" }}>
+                                                                    <p className="eventItemTitre" style={{ paddingLeft: "10px", marginTop: "10px", marginBottom: "0px" }}>{event.entitled}</p>
                                                                 </Grid>
-                                                                <Grid item lg={3} md={6} xs={12}>
-                                                                    <p style={{ paddingLeft: "10px" }}>{event.city}</p>
+                                                                <Grid item lg={3} md={6} xs={12} component={LinkRouter} to={'/eventDetails/' + event.id} style={{ textDecoration: "none", color: "black" }}>
+                                                                    <p className="eventItemInfo" style={{ paddingLeft: "10px", marginTop:"10px", marginBottom: "0px" }}>{event.city}</p>
                                                                 </Grid>
-                                                                <Grid item lg={3} md={6} xs={12}>
-                                                                    <p style={{ paddingLeft: "10px" }}>{getDayNumbersMonthLettersYearNumbers(event.startDate) + " - " + getHours(event.startDate)}</p>
+                                                                <Grid item lg={3} md={6} xs={12} component={LinkRouter} to={'/eventDetails/' + event.id} style={{ textDecoration: "none", color: "black" }}>
+                                                                    <p className="eventItemInfo" style={{ paddingLeft: "10px", marginTop:"10px", marginBottom: "0px" }}>{getDayNumbersMonthLettersYearNumbers(event.startDate) + " - " + getHours(event.startDate)}</p>
                                                                 </Grid>
-                                                                <Grid item lg={2} md={6} xs={12} style={{ display: "flex", alignItems: "center" }}>
+                                                                <Grid item lg={2} md={6} xs={12} sx={{ height: {xs: "50px"}, display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                     <SplitButton eventId={event.id}></SplitButton>
                                                                 </Grid>
                                                             </Grid>
@@ -139,7 +155,7 @@ class BoardPage extends React.Component {
                                                     })
                                                 }
                                             </div>
-                                            <LinkRouter to={hasRight("manage_events") ? "/eventsGestion" : "/events"} className="item-three">
+                                            <LinkRouter to="/events" className="item-three">
                                                 <p style={{ display: "inline" }}>Voir tous les évènements</p>
                                                 <ArrowForwardIcon style={{ position: "relative", top: "5px", left: "5px", fontSize: "20px" }} />
                                             </LinkRouter>

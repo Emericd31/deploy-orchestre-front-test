@@ -6,6 +6,7 @@ import { InstrumentsArray } from "../Account/InstrumentsArray";
 import InstrumentForm from "../forms/InstrumentForm";
 import ConfirmPopup from "../../General/Popups/ConfirmPopup";
 import { removeInstrument } from "../../../GraphQL/mutations/InstrumentsMutations";
+import { getMusicalFormations } from "../../../GraphQL/queries/EventQueries";
 
 class InstrumentsInitialization extends React.Component {
   constructor(props) {
@@ -17,13 +18,16 @@ class InstrumentsInitialization extends React.Component {
       openPopupModify: false,
       openPopupDeleteConfirm: false,
       instruments: [],
+      musicalFormations: []
     };
   }
 
   componentDidMount() {
     getInstrumentsByUser().then((res) => {
-      this.setState({ instruments: res.instrumentsByUser }, () => {
-        this.props.functionCheckCompleted(1, true);
+      getMusicalFormations().then((res2) => {
+        this.setState({ musicalFormations: res2.musicalFormations, instruments: res.instrumentsByUser }, () => {
+          this.props.functionCheckCompleted(1, true);
+        });
       });
     });
   }
@@ -155,6 +159,7 @@ class InstrumentsInitialization extends React.Component {
         >
           <div style={{ display: "flex", justifyContent: "center" }}>
             <InstrumentForm
+              musicalFormations={this.state.musicalFormations}
               parentCallback={(instrument) =>
                 this.addInstrument(instrument)
               }></InstrumentForm>
@@ -173,6 +178,7 @@ class InstrumentsInitialization extends React.Component {
             <InstrumentForm
               isEditable={true}
               instrument={this.state.currentInstrument}
+              musicalFormations={this.state.musicalFormations}
               parentCallback={(instrument) =>
                 this.modifyInstrument(instrument)
               }></InstrumentForm>

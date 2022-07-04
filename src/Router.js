@@ -19,6 +19,8 @@ import CommunicationPage from './pages/Administration/CommunicationPage';
 import MembersAdministrationPage from './pages/Administration/MembersAdministrationPage';
 import AddMemberPage from './pages/Administration/AddMemberPage';
 import MailValidationPage from './pages/User/MailValidationPage';
+import EventSettingsPage from './pages/Administration/EventSettingsPage';
+import DressPage from './pages/Dress/DressPage';
 
 function isAuthenticated() {
   let token = localStorage.getItem('Token');
@@ -74,6 +76,13 @@ function AuthEventGestion(props) {
   return props.children;
 }
 
+function AuthDressGestion(props) {
+  if (!hasRight("manage_locker_room")) {
+    return <Navigate to="/board" />
+  }
+  return props.children;
+}
+
 function AuthMembersGestion(props) {
   if (!hasRight("manage_members")) {
     return <Navigate to="/board" />
@@ -119,10 +128,10 @@ class MainRouter extends React.Component {
     return (
       this.state.loaded ? (
         <div>
-          <HashRouter forceRefresh={false} >
+          <BrowserRouter forceRefresh={false} >
             <Routes>
-              <Route path='/signin' element={<RedirectToHome><LoginPage /></RedirectToHome>} />
               <Route exact path='/verify/:token' element={<MailValidationPage />} />
+              <Route path='/signin' element={<RedirectToHome><LoginPage /></RedirectToHome>} />
               <Route path='/newprofile' element={<NewProfileRoute><NewProfilePage /></NewProfileRoute>} />
               <Route path="/" element={<AuthRoute><App /></AuthRoute>}>
                 <Route path='/membersGestion' element={<AuthMembersGestion><MembersAdministrationPage /></AuthMembersGestion>} />
@@ -131,6 +140,7 @@ class MainRouter extends React.Component {
                 <Route path="board" element={<BoardPage />} />
                 <Route path='/myaccount' element={<MyAccountPage />} />
                 <Route path='/events' element={<EventPage />} />
+                <Route path='/events/settings' element={<EventSettingsPage />} />
                 <Route path='/eventsGestion' element={<AuthEventGestion><EventPageGestion /></AuthEventGestion>} />
                 <Route path='/add/event' element={<AuthEventGestion><AddEventPage /></AuthEventGestion>} />
                 <Route path='/eventDetails/:eventId' element={<EventDetailsPage admin={hasRight("manage_events")} />} />
@@ -139,13 +149,13 @@ class MainRouter extends React.Component {
                 <Route path='/dressing' element={<ConstructionPage />} />
                 <Route path='/claims' element={<ConstructionPage />} />
                 <Route path='/membersGestion' element={<ConstructionPage />} />
-                <Route path='/lockerGestion' element={<ConstructionPage />} />
+                <Route path='/lockerGestion' element={<AuthDressGestion><DressPage /></AuthDressGestion>} />
                 <Route path='/communicationGestion' element={<CommunicationPage />} />
                 <Route path='/claimsGestion' element={<ConstructionPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
-          </HashRouter >
+          </BrowserRouter >
         </div>) : ""
     )
   }

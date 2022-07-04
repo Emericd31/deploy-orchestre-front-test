@@ -17,7 +17,7 @@ export default function CustomizedStepper(props) {
       <Stepper nonLinear activeStep={props.currentStep}>
         {props.steps.map((label, index) => (
           <Step key={label} completed={props.completed[index]}>
-            <StepButton color="inherit" /*onClick={handleStep(index)}*/>
+            <StepButton color="inherit" onClick={handleStep(index)}>
               {label}
             </StepButton>
           </Step>

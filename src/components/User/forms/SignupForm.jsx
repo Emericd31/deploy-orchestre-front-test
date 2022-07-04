@@ -166,7 +166,7 @@ class SignInForm extends React.Component {
               item
               xs={12}
             >
-              <p>Le mot de passe choisi est temporaire et devra être modifié par l'utilisateur lors de sa première connexion.<br />Le mot de passe doit contenir entre 8 et 20 caractères dont un nombre, une minuscule et une majuscule.</p>
+              <p>Le mot de passe choisi est temporaire et devra être modifié par l'utilisateur lors de sa première connexion.<br />Le mot de passe doit contenir entre 8 et 20 caractères dont un nombre, une minuscule et une majuscule.<br />Il lui sera communiqué dans l'email d'inscription.</p>
               <LiveBriefedTextField
                 id={"password-field"}
                 label="Mot de passe"

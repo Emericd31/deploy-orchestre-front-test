@@ -1,7 +1,5 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
-
-const client = new GraphQLClient("http://localhost:5003/graphql");
 
 export var addMedicalPrescription = async function (file) {
   const token = localStorage.getItem("Token");
@@ -18,7 +16,7 @@ export var addMedicalPrescription = async function (file) {
       }
     }
     `;
-  return await client.request(mutation, variable);
+  return await serverClient.request(mutation, variable);
 }
 
 export var deleteMedicalPrescription = async function (medicalPrescriptionId) {

@@ -29,8 +29,10 @@ export default function Popup(props) {
       },
     }}>
       <DialogTitle>
-        <div>
+        <div style={{ width: "80%" }}>
           {title}
+        </div>
+        <div style={{ position: "absolute", top: "10px", right: "10px" }}>
           {closable !== "false" ? (
             <Button
               style={primaryButton}

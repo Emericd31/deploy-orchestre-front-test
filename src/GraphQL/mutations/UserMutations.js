@@ -1,7 +1,5 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
-
-const client = new GraphQLClient("http://localhost:5003/graphql");
 
 export var verifyUser = async function (token) {
   const variable = {
@@ -243,6 +241,42 @@ export var removeRightFromUser = async function (idUser, idRight) {
   return await serverClient.request(mutation, variable);
 }
 
+export var assignTypeToUser = async function (userId, typeId) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const variable = {
+    userId: userId,
+    typeId: typeId
+  };
+  const mutation = gql`
+    mutation assignTypeToUser($userId: Int!, $typeId: Int!) {
+      assignTypeToUser(userId: $userId, typeId: $typeId) {
+        statusCode
+        message
+      }
+    }
+  `;
+  return await serverClient.request(mutation, variable);
+}
+
+export var removeTypeFromUser = async function (userId, typeId) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const variable = {
+    userId: userId,
+    typeId: typeId
+  };
+  const mutation = gql`
+    mutation removeTypeFromUser($userId: Int!, $typeId: Int!) {
+      removeTypeFromUser(userId: $userId, typeId: $typeId) {
+        statusCode
+        message
+      }
+    }
+  `;
+  return await serverClient.request(mutation, variable);
+}
+
 export var confirmProfile = async function () {
   const token = localStorage.getItem("Token");
   serverClient.setHeader("authorization", "Bearer " + token);
@@ -306,11 +340,13 @@ export var checkUserTokenWithEmailClaim = async function (token) {
   return await serverClient.request(mutation, variable);
 };
 
-export var modifyPassword = async function (input) {
+export var modifyPassword = async function (oldPassword, newPassword) {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
   const variable = {
-    token: input.token,
-    oldPassword: input.oldPassword,
-    newPassword: input.newPassword,
+    token: localStorage.getItem("Token"),
+    oldPassword: oldPassword,
+    newPassword: newPassword,
   };
   const mutation = gql`
     mutation modifyPassword(

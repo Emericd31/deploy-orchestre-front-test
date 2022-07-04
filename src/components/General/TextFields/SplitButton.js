@@ -15,6 +15,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { styled } from '@mui/material/styles';
 import { setPresence } from '../../../GraphQL/mutations/EventMutations';
 import { getMyPresence } from '../../../GraphQL/queries/EventQueries';
+import CustomizedSnackbars from '../Popups/CustomizedSnackbar';
 
 const RedButton = styled(Button)(({ theme }) => ({
     color: "white",
@@ -44,6 +45,7 @@ export default function SplitButton(props) {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
     const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const [notifOpen, setNotifOpen] = React.useState(false);
 
     const handleButtonClicked = (eventId, presence) => {
         setPresence(parseInt(eventId), presence).then((res) => {
@@ -74,14 +76,22 @@ export default function SplitButton(props) {
     }, [])
 
     const options = [
-        <GrayButton onClick={() => handleButtonClicked(props.eventId, "NONRENSEIGNE")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="inherit"><ManageAccountsIcon />{ !open ? <ArrowDropDownIcon style={{ marginLeft: "10px" }} /> : ""}</GrayButton>,
-        <GreenButton onClick={() => handleButtonClicked(props.eventId, "PRESENT")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="success"><PersonAddIcon />{ !open ? <ArrowDropDownIcon  style={{ marginLeft: "10px" }} /> : ""}</GreenButton>,
-        <RedButton onClick={() => handleButtonClicked(props.eventId, "ABSENT")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="success"><PersonRemoveIcon />{ !open ? <ArrowDropDownIcon  style={{ marginLeft: "10px" }} /> : ""}</RedButton>
+        <GrayButton onClick={() => handleButtonClicked(props.eventId, "NONRENSEIGNE")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="inherit"><ManageAccountsIcon />{!open ? <ArrowDropDownIcon style={{ marginLeft: "10px" }} /> : ""}</GrayButton>,
+        <GreenButton onClick={() => handleButtonClicked(props.eventId, "PRESENT")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="success"><PersonAddIcon />{!open ? <ArrowDropDownIcon style={{ marginLeft: "10px" }} /> : ""}</GreenButton>,
+        <RedButton onClick={() => handleButtonClicked(props.eventId, "ABSENT")} variant="contained" style={{ padding: "0px", margin: "0px", height: "100%", width: "100px" }} color="success"><PersonRemoveIcon />{!open ? <ArrowDropDownIcon style={{ marginLeft: "10px" }} /> : ""}</RedButton>
     ];
 
     const handleClick = () => {
-        setOpen(true);
+        if (props.disabled != true) {
+            setOpen(true);
+        } else {
+            setNotifOpen(true);
+        }
     };
+
+    const resetNotifOpen = () => {
+        setNotifOpen(false);
+    }
 
     const handleMenuItemClick = (event, index) => {
         setSelectedIndex(index);
@@ -147,6 +157,17 @@ export default function SplitButton(props) {
                     </Grow>
                 )}
             </Popper>
+            {
+                notifOpen ? (
+                    <CustomizedSnackbars
+                        open={true}
+                        timer={3000}
+                        message={"L'évènement est déjà passé, impossible de modifier votre présence."}
+                        severity={"info"}
+                        functionCallback={() => resetNotifOpen()}
+                    />
+                ) : ""
+            }
         </React.Fragment>
     );
 }

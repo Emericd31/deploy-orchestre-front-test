@@ -1,7 +1,5 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
-
-const client = new GraphQLClient("http://localhost:5003/graphql");
 
 export var isRegistered = async function (userId) {
   const variable = {
@@ -36,6 +34,27 @@ export var getUsers = async function () {
             name
           }
         }
+        userTypes {
+          type {
+            id
+            memberType
+          }
+        }
+      }
+    }
+  `;
+  return await serverClient.request(query);
+};
+
+export var getUsersBase = async function () {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const query = gql`
+    query users {
+      users {
+        id
+        firstName
+        lastName
       }
     }
   `;
@@ -96,6 +115,7 @@ export var getPersonalData = async function () {
         lastName
         email
         birthday
+        birthPlace
         address
         addressComplement
         city
@@ -198,6 +218,37 @@ export var getAllRights = async function () {
       allRights {
         id
         name
+      }
+    }
+  `;
+  return await serverClient.request(query);
+}
+
+export var getAllTypes = async function () {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const query = gql`
+    query allTypes {
+      allTypes {
+        id
+        memberType
+      }
+    }
+  `;
+  return await serverClient.request(query);
+}
+
+export var getMyInstruments = async function () {
+  const token = localStorage.getItem("Token");
+  serverClient.setHeader("authorization", "Bearer " + token);
+  const query = gql`
+    query currentUser {
+      currentUser {
+        instruments {
+          type {
+            type
+          }
+        }
       }
     }
   `;

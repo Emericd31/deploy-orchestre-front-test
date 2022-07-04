@@ -1,7 +1,5 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
-
-const client = new GraphQLClient("http://localhost:5003/graphql");
 
 export var getMusicalFormations = async function () {
   const query = gql`
@@ -22,6 +20,25 @@ export var getMusicalFormations = async function () {
   return data;
 };
 
+export var getTransportTypes = async function () {
+  const query = gql`
+    {
+      transportTypes {
+        id
+        type
+      }
+    }
+  `;
+  const variables = {};
+  const token = localStorage.getItem("Token");
+  const requestHeaders = {
+    authorization: "Bearer " + token,
+  };
+
+  const data = await serverClient.request(query, variables, requestHeaders);
+  return data;
+};
+
 export var getEventsGeneralInfos = async function () {
   const query = gql`
     {
@@ -29,14 +46,42 @@ export var getEventsGeneralInfos = async function () {
         id, 
         entitled,
         city, 
+        postalCode,
         startDate, 
         endDate, 
+        address,
+        addressComplement,
+        musicalFormation {
+          id 
+          value
+        }
+        eventType,
+        phoneNumber, 
+        mobileNumber,
+        email,
+        dresses, 
         transportMode, 
         appointmentAddress, 
         appointmentCity, 
         appointmentPostalCode, 
         appointmentTime, 
         endInscriptionDate
+        clientName
+        clientFirstname
+        clientPhoneNumber
+        clientMobileNumber
+        clientEmail
+        clientFunction
+        clientAddress
+        clientPostalCode
+        clientCity
+        diffusionActiveMembers
+        diffusionAdministration
+        diffusionPublic
+        illustrationPath
+        diffusionPublic
+        publicDescription
+        activeMembersInformations
       }
     }
   `;
@@ -58,6 +103,7 @@ export var getMyPresence = async function (eventId) {
     query myPresence($eventId: Int!) {
       myPresence(eventId: $eventId) {
         presence
+        instrument
       }
     }
   `;
@@ -126,8 +172,11 @@ export var getUsersAndPresencesByEvent = async function (eventId) {
             id
             firstName
             lastName
+            mobileNumber
           } item2 {
             presence
+            date
+            instrument
           }
         }
       }

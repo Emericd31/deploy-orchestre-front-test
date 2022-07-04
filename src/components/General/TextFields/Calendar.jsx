@@ -10,6 +10,7 @@ import isSameDay from 'date-fns/isSameDay';
 import isWithinInterval from 'date-fns/isWithinInterval';
 import startOfWeek from 'date-fns/startOfWeek';
 import { Paper } from '@mui/material';
+import frLocale from "date-fns/locale/fr";
 
 const CustomPickersDay = styled(PickersDay, {
     shouldForwardProp: (prop) =>
@@ -68,7 +69,7 @@ export default function CustomDay(props) {
 
     return (
         <Paper elevation={3} style={{ width: "320px" }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                 <StaticDatePicker
                     displayStaticWrapperAs="desktop"
                     label="Week picker"
@@ -78,7 +79,7 @@ export default function CustomDay(props) {
                     }}
                     renderDay={renderWeekPickerDay}
                     renderInput={(params) => <TextField {...params} />}
-                    inputFormat="'Week of' MMM d"
+                    inputFormat="dd-MMMM-yyyyy"
                 />
             </LocalizationProvider>
         </Paper>

@@ -22,10 +22,7 @@ class InstrumentForm extends React.Component {
             currentMusicalFormationId: "",
             areFieldsValid: false,
             types: [],
-            formations: [
-                { value: 1, texte: "Harmonie" },
-                { value: 2, texte: "Banda" },
-            ]
+            formations: this.props.musicalFormations
         };
     }
 
@@ -41,8 +38,8 @@ class InstrumentForm extends React.Component {
                     });
                     var currentMusicalFormationId = "";
                     this.state.formations.map((formation) => {
-                        if (formation.texte === this.state.musicalFormation) {
-                            currentMusicalFormationId = formation.value;
+                        if (formation.value === this.state.musicalFormation) {
+                            currentMusicalFormationId = formation.id;
                         }
                     });
                     this.setState({ currentTypeId: currentTypeId, currentMusicalFormationId: currentMusicalFormationId }, () => {
@@ -93,8 +90,8 @@ class InstrumentForm extends React.Component {
     addInstrument = () => {
         var musicalFormation = "";
         this.state.formations.map((formation) => {
-            if (formation.value === this.state.currentMusicalFormationId) {
-                musicalFormation = formation.texte;
+            if (formation.id === this.state.currentMusicalFormationId) {
+                musicalFormation = formation.value;
             }
             return "";
         });
@@ -131,8 +128,8 @@ class InstrumentForm extends React.Component {
     modifyInstrument = () => {
         var musicalFormation = "";
         this.state.formations.map((formation) => {
-            if (formation.value === this.state.currentMusicalFormationId) {
-                musicalFormation = formation.texte;
+            if (formation.id === this.state.currentMusicalFormationId) {
+                musicalFormation = formation.value;
             }
             return "";
         });
@@ -165,6 +162,12 @@ class InstrumentForm extends React.Component {
                 this.props.parentCallback(instrument);
             }
         })
+    }
+
+    sortArray = (x, y) => {
+        if (x.type < y.type) {return -1;}
+        if (x.type > y.type) {return 1;}
+        return 0;
     }
 
     render() {
@@ -204,7 +207,7 @@ class InstrumentForm extends React.Component {
                                     this.updateSelect("currentTypeId", event.target.value)
                                 }
                             >
-                                {this.state.types.map((type) => (
+                                {this.state.types.sort(this.sortArray).map((type) => (
                                     <MenuItem key={type.id} value={type.id}>
                                         {type.type}
                                     </MenuItem>
@@ -276,8 +279,8 @@ class InstrumentForm extends React.Component {
                                 }
                             >
                                 {this.state.formations.map((type) => (
-                                    <MenuItem key={type.value} value={type.value}>
-                                        {type.texte}
+                                    <MenuItem key={type.id} value={type.id}>
+                                        {type.value}
                                     </MenuItem>
                                 ))}
                             </Select>

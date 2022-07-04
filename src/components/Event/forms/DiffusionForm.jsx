@@ -1,14 +1,15 @@
 import React, { Fragment } from "react";
-import { Grid } from "@mui/material";
-import { Button } from "@mui/material";
-import { TextField } from "@mui/material";
+import { Grid, Chip, Button, TextField } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { FormControlLabel } from "@mui/material";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import frLocale from "date-fns/locale/fr";
 import {
     DateTimePicker
 } from '@mui/lab';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 class DiffusionForm extends React.Component {
     constructor(props) {
@@ -62,24 +63,13 @@ class DiffusionForm extends React.Component {
     render() {
         return (
             <div>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginRight: "1%",
-                        marginTop: "1%",
-                        paddingBottom: "1%",
-                    }}
-                >
-                    <h1>Informations de Diffusion : </h1>
-                </div>
+                <h1 style={{ textAlign: "center" }}>Informations de Diffusion</h1>
 
                 <Grid container spacing={3} style={{ textAlign: "center" }}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={6} lg={3}>
                         <h2 style={{ margin: "0" }}>Ajouter une illustration :</h2>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={6} lg={3}>
                         <Button
                             variant="contained"
                             color="primary"
@@ -129,71 +119,60 @@ class DiffusionForm extends React.Component {
                         />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={12} md={6} lg={4}>
                         <h2 style={{ margin: "0", textAlign: "left" }}>
                             Mode de diffusion :
                         </h2>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} md={6} lg={4}>
                         <Grid item xs={12} style={{ textAlign: "left" }}>
-                            <FormControlLabel
-                                style={{ marginTop: "5px" }}
-                                control={
-                                    <Checkbox
-                                        checked={this.state.diffusionActiveMembers}
-                                        value={this.state.diffusionActiveMembers}
-                                        onChange={() =>
-                                            this.changeCheck(
-                                                "diffusionActiveMembers",
-                                                !this.state.diffusionActiveMembers
-                                            )
-                                        }
-                                        name="Calendrier_des_membres_actifs"
-                                        color="primary"
-                                    />
-                                }
-                                label="Calendrier des Membres Actifs"
-                            />
+                            {
+                                this.state.diffusionActiveMembers ? (
+                                    <Chip
+                                        onClick={() => {
+                                            this.setState({ diffusionActiveMembers: !this.state.diffusionActiveMembers })
+                                        }}
+                                        avatar={<DoneIcon style={{ color: "white" }} />} label="Calendrier des Membres Actifs" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                ) : (
+                                    <Chip
+                                        onClick={() => {
+                                            this.setState({ diffusionActiveMembers: !this.state.diffusionActiveMembers })
+                                        }}
+                                        avatar={<CloseIcon style={{ color: "white" }} />} label="Calendrier des Membres Actifs" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                )
+                            }
                         </Grid>
                         <Grid item xs={12} style={{ textAlign: "left" }}>
-                            <FormControlLabel
-                                style={{ marginTop: "5px" }}
-                                control={
-                                    <Checkbox
-                                        checked={this.state.diffusionPublic}
-                                        value={this.state.diffusionPublic}
-                                        onChange={() =>
-                                            this.changeCheck(
-                                                "diffusionPublic",
-                                                !this.state.diffusionPublic
-                                            )
-                                        }
-                                        name="Calendrier_public"
-                                        color="primary"
-                                    />
-                                }
-                                label="Calendrier Public"
-                            />
+                            {
+                                this.state.diffusionPublic ? (
+                                    <Chip
+                                        onClick={() => {
+                                            this.setState({ diffusionPublic: !this.state.diffusionPublic })
+                                        }}
+                                        avatar={<DoneIcon style={{ color: "white" }} />} label="Calendrier Public" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                ) : (
+                                    <Chip
+                                        onClick={() => {
+                                            this.setState({ diffusionPublic: !this.state.diffusionPublic })
+                                        }}
+                                        avatar={<CloseIcon style={{ color: "white" }} />} label="Calendrier Public" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                )
+                            }
                         </Grid>
                         <Grid item xs={12} style={{ textAlign: "left" }}>
-                            <FormControlLabel
-                                style={{ marginTop: "5px" }}
-                                control={
-                                    <Checkbox
-                                        checked={this.state.diffusionAdministration}
-                                        value={this.state.diffusionAdministration}
-                                        name="Calendrier_administration"
-                                        color="primary"
-                                    />
-                                }
-                                label="Calendrier Administration"
-                            />
+                            {
+                                this.state.diffusionAdministration ? (
+                                    <Chip
+                                        avatar={<DoneIcon style={{ color: "white" }} />} label="Calendrier Administration" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                ) : (
+                                    <Chip
+                                        avatar={<CloseIcon style={{ color: "white" }} />} label="Calendrier Administration" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                )
+                            }
                         </Grid>
                     </Grid>
-                    <Grid
-                        item
-                        xs={4}
-                    ><LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <Grid item xs={12} md={6} lg={4}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                             <DateTimePicker
                                 renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
                                 label="Date limite d'inscription"
@@ -207,7 +186,8 @@ class DiffusionForm extends React.Component {
                     style={{
                         display: "flex",
                         justifyContent: "flex-end",
-                        paddingBottom: "20px"
+                        paddingBottom: "20px", 
+                        marginTop: "20px"
                     }}
                 >
                     <Button

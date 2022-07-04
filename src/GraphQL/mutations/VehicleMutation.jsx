@@ -1,7 +1,5 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
-
-const client = new GraphQLClient("http://localhost:5003/graphql");
 
 export var addVehicle = async function (
     marque,

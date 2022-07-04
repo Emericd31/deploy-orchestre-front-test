@@ -13,6 +13,8 @@ import {
 } from '@mui/lab';
 import BriefedTextField from "../../General/TextFields/BriefedTextField";
 import LiveBriefedTextField from "../../General/TextFields/LiveBriefedTextField";
+import frLocale from "date-fns/locale/fr";
+import { getTransportTypes } from "../../../GraphQL/queries/EventQueries";
 
 class LogisticProgramForm extends React.Component {
     constructor(props) {
@@ -23,12 +25,7 @@ class LogisticProgramForm extends React.Component {
             postalCode: props.event.programPostalCode,
             city: props.event.programCity,
             transportMode: props.event.programTransportMode,
-            transportModes: [
-                { id: 0, value: "Bateau" },
-                { id: 1, value: "Avion" },
-                { id: 2, value: "Voiture" },
-                { id: 3, value: "Bus" },
-            ],
+            transportModes: [],
             tenueVestimentaire: props.event.programTenueVestimentaire,
             tenuesVestimentaires: [
                 { id: 0, value: "Tenue 1" },
@@ -42,10 +39,14 @@ class LogisticProgramForm extends React.Component {
                 { id: 2, value: "Programme 3" },
             ],
             rendezvousDate: props.event.programRendezvousDate,
+            isLoading: true
         };
     }
 
     componentDidMount() {
+        getTransportTypes().then((res) => {
+            this.setState({ transportModes: res.transportTypes, isLoading: false });
+        })
         this.checkRequiredFields();
     }
 
@@ -107,222 +108,188 @@ class LogisticProgramForm extends React.Component {
 
     render() {
         return (
-            <div>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginRight: "1%",
-                        marginTop: "1%",
-                        paddingBottom: "1%",
-                    }}
-                >
-                    <h1>Programme & Logistique : </h1>
-                </div>
+            !this.state.isLoading ? (
+                <div>
+                    <h1 style={{ textAlign: "center" }}>Programme & Logistique</h1>
+                    <Grid container spacing={3} style={{ textAlign: "center" }}>
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel id="clothes_label">
+                                    Tenue vestimentaire
+                                </InputLabel>
+                                <Select
+                                    id="type"
+                                    labelId="clothes_label"
+                                    label="Tenue vestimentaire *"
+                                    value={this.state.tenueVestimentaire}
+                                    onChange={(event) =>
+                                        this.updateSelect("tenueVestimentaire", event.target.value)
+                                    }
+                                >
+                                    {this.state.tenuesVestimentaires.map((tenueVestimentaire) => (
+                                        <MenuItem
+                                            key={tenueVestimentaire.id}
+                                            value={tenueVestimentaire.id}
+                                        >
+                                            {tenueVestimentaire.value}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel id="transport_mode_label">
+                                    Mode de transport
+                                </InputLabel>
+                                <Select
+                                    id="type"
+                                    labelId="transport_mode_label"
+                                    label="Mode de transport *"
+                                    value={this.state.transportMode}
+                                    onChange={(event) =>
+                                        this.updateSelect("transportMode", event.target.value)
+                                    }
+                                >
+                                    {this.state.transportModes.map((transportMode) => (
+                                        <MenuItem key={transportMode.id} value={transportMode.type}>
+                                            {transportMode.type}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                <Grid container spacing={3} style={{ textAlign: "center" }}>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="clothes_label">
-                                Tenue vestimentaire
-                            </InputLabel>
-                            <Select
-                                id="type"
-                                labelId="clothes_label"
-                                label="Tenue vestimentaire *"
-                                value={this.state.tenueVestimentaire}
-                                onChange={(event) =>
-                                    this.updateSelect("tenueVestimentaire", event.target.value)
+                        <Grid item xs={12} md={6}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
+                                <DateTimePicker
+                                    renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
+                                    label="Date et heure de rendez-vous"
+                                    value={this.state.rendezvousDate}
+                                    onChange={this.handleDateChange}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <BriefedTextField
+                                id={"address-field"}
+                                label="Adresse de rendez-vous"
+                                type="text"
+                                name="text"
+                                required={false}
+                                value={this.state.address}
+                                saveField={(input, errorState) =>
+                                    this.updateField("address", input, errorState)
                                 }
-                            >
-                                {this.state.tenuesVestimentaires.map((tenueVestimentaire) => (
-                                    <MenuItem
-                                        key={tenueVestimentaire.id}
-                                        value={tenueVestimentaire.id}
-                                    >
-                                        {tenueVestimentaire.value}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="transport_mode_label">
-                                Mode de transport
-                            </InputLabel>
-                            <Select
-                                id="type"
-                                labelId="transport_mode_label"
-                                label="Mode de transport *"
-                                value={this.state.transportMode}
-                                onChange={(event) =>
-                                    this.updateSelect("transportMode", event.target.value)
-                                }
-                            >
-                                {this.state.transportModes.map((transportMode) => (
-                                    <MenuItem key={transportMode.id} value={transportMode.id}>
-                                        {transportMode.value}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                                renderInput={(props) => <TextField size="small" {...props} style={{ width: "100%" }} />}
-                                label="Date et heure de rendez-vous"
-                                value={this.state.rendezvousDate}
-                                onChange={this.handleDateChange}
                             />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={6}
-                    >
-                        <BriefedTextField
-                            id={"address-field"}
-                            label="Adresse de rendez-vous"
-                            type="text"
-                            name="text"
-                            required={false}
-                            value={this.state.address}
-                            saveField={(input, errorState) =>
-                                this.updateField("address", input, errorState)
-                            }
-                        />
-                    </Grid>
+                        </Grid>
 
-                    <Grid
-                        item
-                        xs={3}
-                    >
-                        <LiveBriefedTextField
-                            id={"postalCode-field"}
-                            label="Code Postal"
-                            type="text"
-                            required={false}
-                            value={this.state.postalCode}
-                            helperText="La syntaxe du code postal n'est pas valide."
-                            saveField={(input, errorState) =>
-                                this.updateField("postalCode", input, errorState)
-                            }
-                            syntaxChecker={this.postalCodeSyntaxCheck}
-                        />
-                    </Grid>
-                    <Grid
-                        item
-                        xs={9}
-                    >
-                        <BriefedTextField
-                            id={"city-field"}
-                            label="Ville"
-                            type="text"
-                            name="text"
-                            required={false}
-                            value={this.state.city}
-                            saveField={(input, errorState) =>
-                                this.updateField("city", input, errorState)
-                            }
-                        />
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={12}
-                    >
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="programme_musical_label">
-                                Programme musical
-                            </InputLabel>
-                            <Select
-                                id="type"
-                                labelId="programme_musical_label"
-                                label="Programme musical *"
-                                value={this.state.musicalProgram}
-                                onChange={(event) =>
-                                    this.updateSelect("musicalProgram", event.target.value)
+                        <Grid item xs={12} md={6} lg={3}>
+                            <LiveBriefedTextField
+                                id={"postalCode-field"}
+                                label="Code Postal"
+                                type="text"
+                                required={false}
+                                value={this.state.postalCode}
+                                helperText="La syntaxe du code postal n'est pas valide."
+                                saveField={(input, errorState) =>
+                                    this.updateField("postalCode", input, errorState)
                                 }
-                            >
-                                {this.state.musicalPrograms.map((musicalProgram) => (
-                                    <MenuItem key={musicalProgram.id} value={musicalProgram.id}>
-                                        {musicalProgram.value}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                                syntaxChecker={this.postalCodeSyntaxCheck}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={9}>
+                            <BriefedTextField
+                                id={"city-field"}
+                                label="Ville"
+                                type="text"
+                                name="text"
+                                required={false}
+                                value={this.state.city}
+                                saveField={(input, errorState) =>
+                                    this.updateField("city", input, errorState)
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel id="programme_musical_label">
+                                    Programme musical
+                                </InputLabel>
+                                <Select
+                                    id="type"
+                                    labelId="programme_musical_label"
+                                    label="Programme musical *"
+                                    value={this.state.musicalProgram}
+                                    onChange={(event) =>
+                                        this.updateSelect("musicalProgram", event.target.value)
+                                    }
+                                >
+                                    {this.state.musicalPrograms.map((musicalProgram) => (
+                                        <MenuItem key={musicalProgram.id} value={musicalProgram.id}>
+                                            {musicalProgram.value}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginRight: "1%",
-                        marginTop: "1%",
-                        paddingBottom: "1%",
-                    }}
-                >
-                    <h1>Programme musical : </h1>
-                </div>
+                    <h1 style={{ textAlign: "center" }}>Programme musical</h1>
 
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginRight: "1%",
-                    }}
-                >
-                    <Button
-                        disabled={false}
-                        variant="contained"
-                        color="primary"
+                    <div
                         style={{
-                            marginBottom: "30px",
-                        }}
-                        onClick={() =>
-                            this.setState({ openPopupAddOrganisationMember: true })
-                        }
-                    >
-                        Ajouter
-                    </Button>
-                </div>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        paddingBottom: "20px"
-                    }}
-                >
-                    <Button
-                        disabled={false}
-                        onClick={() => this.saveEventInfo(-1)}
-                        variant="contained"
-                        sx={{
-                            backgroundColor: "#1D70B7"
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                            marginRight: "1%",
                         }}
                     >
-                        Retour
-                    </Button>
-                    <Button
-                        disabled={!this.state.fieldsAreValid}
-                        onClick={() => this.saveEventInfo(1)}
-                        variant="contained"
-                        sx={{
-                            ml: 2,
-                            backgroundColor: "#1D70B7"
+                        <Button
+                            disabled={false}
+                            variant="contained"
+                            color="primary"
+                            style={{
+                                marginBottom: "30px",
+                            }}
+                            onClick={() =>
+                                this.setState({ openPopupAddOrganisationMember: true })
+                            }
+                        >
+                            Ajouter
+                        </Button>
+                    </div>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            paddingBottom: "20px"
                         }}
                     >
-                        Suivant
-                    </Button>
-                </div>
-            </div>
+                        <Button
+                            disabled={false}
+                            onClick={() => this.saveEventInfo(-1)}
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#1D70B7"
+                            }}
+                        >
+                            Retour
+                        </Button>
+                        <Button
+                            disabled={!this.state.fieldsAreValid}
+                            onClick={() => this.saveEventInfo(1)}
+                            variant="contained"
+                            sx={{
+                                ml: 2,
+                                backgroundColor: "#1D70B7"
+                            }}
+                        >
+                            Suivant
+                        </Button>
+                    </div>
+                </div>) : ""
         );
     }
 }

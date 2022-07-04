@@ -13,6 +13,7 @@ import Popup from "../../General/Popups/Popup";
 import { getPersonalData } from '../../../GraphQL/queries/UserQueries';
 import { getDayNumbersMonthLettersYearNumbers } from '../../../Helpers/DateGestion';
 import { GreenButton } from "../../General/StyledComponents/StyledButtons";
+import PersonalDataForm from "../forms/PersonalDataForm";
 
 class GeneralDataTab extends React.Component {
     constructor(props) {
@@ -37,6 +38,40 @@ class GeneralDataTab extends React.Component {
         this.setState({ openPopupEdit: true }, () => {
             this.props.functionCallback(true);
         });
+    }
+
+    createPersonalData() {
+        return {
+            firstname: this.state.user.firstName,
+            lastname: this.state.user.lastName,
+            birthday: this.state.user.birthday,
+            birthplace: this.state.user.birthPlace,
+            address: this.state.user.address,
+            addressComplement: this.state.user.addressComplement,
+            postalCode: this.state.user.postalCode,
+            city: this.state.user.city,
+            phoneNumber: this.state.user.phoneNumber,
+            mobileNumber: this.state.user.mobileNumber
+        }
+    }
+
+    updatePersonalData(user) {
+        this.setState(prevState => ({
+            user: {                   // object that we want to update
+                ...prevState.user,    // keep all other key-value pairs
+                firstName: user.firstname,
+                lastName: user.lastname,
+                birthday: user.birthday,
+                birthPlace: user.birthplace,
+                address: user.address,
+                addressComplement: user.addressComplement,
+                postalCode: user.postalCode,
+                city: user.city,
+                phoneNumber: user.phoneNumber,
+                mobileNumber: user.mobileNumber      // update the value of specific key
+            }, 
+            openPopupEdit: false
+        }))
     }
 
     render() {
@@ -113,7 +148,12 @@ class GeneralDataTab extends React.Component {
                             })
                         }
                     >
-                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div>
+                            <PersonalDataForm functionCallback={(user) => {
+                                this.updatePersonalData(user);
+                                this.props.functionCallback(false);
+                            }}
+                                user={this.createPersonalData()} />
                         </div>
                     </Popup>
                 </div>) : ""

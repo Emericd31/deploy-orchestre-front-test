@@ -12,6 +12,9 @@ import PowerIcon from "@mui/icons-material/Power";
 import { AppBar } from "@mui/material";
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import LogoutIcon from '@mui/icons-material/Logout';
+import IconButton from '@mui/material/IconButton';
+import { Navigate } from 'react-router-dom';
 
 const backgroundGradient =
   "linear-gradient( 135deg, #11bbdd 0%, #1976d2 50%, #050055 100%)";
@@ -79,21 +82,46 @@ class NewProfilPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      disconnect: false
+    };
+  }
+
+  disconnect() {
+    localStorage.clear();
+    this.setState({ disconnect: true });
   }
 
   render() {
     return (
-      <div className="root">
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Compléter son profil
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <ProfilManagementComponent />
-      </div>
+      this.state.disconnect ? (
+        <Navigate to="/signin" />
+      ) : (
+        <div className="root">
+          <AppBar position="static">
+            <Toolbar>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Compléter son profil
+              </Typography>
+              {localStorage.getItem("Token") ? (
+                <div style={{ flex: 1 }}>
+                  <IconButton
+                    id="btnProfile"
+                    aria-haspopup="true"
+                    onClick={() => this.disconnect()}
+                    color="inherit"
+                    size="large"
+                    style={{ float: "right" }}>
+                    <LogoutIcon />
+                  </IconButton>
+                </div>
+              ) : (
+                ""
+              )}
+            </Toolbar>
+          </AppBar>
+          <ProfilManagementComponent />
+        </div>)
     );
   }
 }

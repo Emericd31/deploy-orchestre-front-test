@@ -96,7 +96,7 @@ class GeneralData extends React.Component {
                                             </p>
                                         </Grid>
                                         <Grid item lg={2} md={6} xs={12}>
-                                            <SplitButton eventId={this.state.eventId}></SplitButton>
+                                            <SplitButton disabled={true} eventId={this.state.eventId}></SplitButton>
                                         </Grid>
                                     </>
                                 )

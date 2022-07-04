@@ -9,6 +9,7 @@ import { addEvent } from "../../GraphQL/mutations/EventMutations";
 import Popup from "../../components/General/Popups/Popup";
 import { Link as LinkRouter } from "react-router-dom";
 import "../../App.css"
+import { addOrganisationMember } from "../../GraphQL/mutations/OrganisationMemberMutation";
 
 const backgroundGradient =
     "linear-gradient( 135deg, #11bbdd 0%, #1976d2 50%, #050055 100%)";
@@ -24,6 +25,7 @@ class AddEventPage extends React.Component {
                 intitule: "",
                 musicalFormation: "",
                 eventType: "",
+                valueEventType: "",
                 eventStartDate: new Date(),
                 eventEndDate: new Date(),
                 eventAddress: "",
@@ -45,6 +47,7 @@ class AddEventPage extends React.Component {
                 programAddress: "",
                 programPostalCode: "",
                 programCity: "",
+                programDresses: "",
                 programTransportMode: "",
                 programTenueVestimentaire: "",
                 programMusicalProgram: "",
@@ -55,7 +58,8 @@ class AddEventPage extends React.Component {
                 diffusionActiveMembers: false,
                 diffusionPublic: false,
                 diffusionAdministration: false,
-                diffusionEndInscriptionDate: new Date()
+                diffusionEndInscriptionDate: new Date(),
+                organisationMembers: []
             },
             components: [],
             currentComponentId: 0,
@@ -87,7 +91,8 @@ class AddEventPage extends React.Component {
             || newEvent.eventMobileNumber !== this.state.event.eventMobileNumber
             || newEvent.eventEmail !== this.state.event.eventEmail
             || newEvent.musicalFormation !== this.state.event.musicalFormation
-            || newEvent.eventType !== this.state.event.eventType;
+            || newEvent.eventType !== this.state.event.eventType
+            || newEvent.valueEventType !== this.state.valueEventType;
 
         if (checkChanges) {
             this.setState(prevState => ({
@@ -104,7 +109,8 @@ class AddEventPage extends React.Component {
                     eventMobileNumber: newEvent.eventMobileNumber,
                     eventEmail: newEvent.eventEmail,
                     musicalFormation: newEvent.musicalFormation,
-                    eventType: newEvent.eventType
+                    eventType: newEvent.eventType,
+                    valueEventType: newEvent.valueEventType
                 },
                 currentComponentId: this.state.currentComponentId + 1
             }), () => {
@@ -126,7 +132,8 @@ class AddEventPage extends React.Component {
             || newEvent.clientFunction !== this.state.event.clientFunction
             || newEvent.clientAddress !== this.state.event.clientAddress
             || newEvent.clientPostalCode !== this.state.event.clientPostalCode
-            || newEvent.clientCity !== this.state.event.clientCity;
+            || newEvent.clientCity !== this.state.event.clientCity
+            || newEvent.organisationMembers !== this.state.event.organisationMembers;
 
         if (checkChanges) {
             this.setState(prevState => ({
@@ -140,7 +147,8 @@ class AddEventPage extends React.Component {
                     clientFunction: newEvent.clientFunction,
                     clientAddress: newEvent.clientAddress,
                     clientPostalCode: newEvent.clientPostalCode,
-                    clientCity: newEvent.clientCity
+                    clientCity: newEvent.clientCity,
+                    organisationMembers: newEvent.organisationMembers
                 },
                 currentComponentId: this.state.currentComponentId + plusOrMinus
             }), () => {
@@ -160,6 +168,7 @@ class AddEventPage extends React.Component {
             || newEvent.programTransportMode !== this.state.event.programTransportMode
             || newEvent.programTenueVestimentaire !== this.state.event.programTenueVestimentaire
             || newEvent.programMusicalProgram !== this.state.event.programMusicalProgram
+            || newEvent.programDresses != this.state.event.programDresses
             || newEvent.programRendezvousDate !== this.state.event.programRendezvousDate;
 
         if (checkChanges) {
@@ -169,6 +178,7 @@ class AddEventPage extends React.Component {
                     programAddress: newEvent.programAddress,
                     programPostalCode: newEvent.programPostalCode,
                     programCity: newEvent.programCity,
+                    programDresses: newEvent.programDresses,
                     programTransportMode: newEvent.programTransportMode,
                     programTenueVestimentaire: newEvent.programTenueVestimentaire,
                     programMusicalProgram: newEvent.programMusicalProgram,
@@ -224,7 +234,7 @@ class AddEventPage extends React.Component {
         const eventInput = {
             entitled: this.state.event.intitule,
             musicalFormationId: this.state.event.musicalFormation,
-            eventType: "eventType", //this.state.event.eventType, 
+            eventType: this.state.event.eventType === "Autres" ? this.state.event.valueEventType : this.state.event.eventType,
             startDate: this.state.event.eventStartDate,
             endDate: this.state.event.eventEndDate,
             address: this.state.event.eventAddress,
@@ -243,7 +253,8 @@ class AddEventPage extends React.Component {
             clientAddress: this.state.event.clientAddress,
             clientPostalCode: this.state.event.clientPostalCode,
             clientCity: this.state.event.clientCity,
-            transportMode: "transportMode", //this.state.event.programTransportMode, 
+            dresses: this.state.event.programDresses,
+            transportMode: this.state.event.programTransportMode, 
             appointmentTime: this.state.event.programRendezvousDate,
             appointmentAddress: this.state.event.programAddress,
             appointmentPostalCode: this.state.event.programPostalCode,
@@ -259,6 +270,18 @@ class AddEventPage extends React.Component {
 
         addEvent(eventInput).then((res) => {
             if (res.addEvent.statusCode === 200) {
+                this.state.event.organisationMembers.forEach(organisationMember => {
+                    addOrganisationMember(
+                        organisationMember.firstname,
+                        organisationMember.lastname,
+                        organisationMember.relationship,
+                        organisationMember.email,
+                        organisationMember.mobileNumber,
+                        res.addEvent.id
+                    ).then((res) => {
+                        // Do nothing
+                    });
+                });
                 this.setState({ openPopupAddEventSuccess: true });
             } else {
                 this.setState({ openPopupAddEventFail: true });

@@ -10,6 +10,7 @@ import { InstrumentsArray } from "./InstrumentsArray";
 import InstrumentForm from "../forms/InstrumentForm";
 import { removeInstrument } from "../../../GraphQL/mutations/InstrumentsMutations";
 import ConfirmPopup from "../../General/Popups/ConfirmPopup";
+import { getMusicalFormations } from "../../../GraphQL/queries/EventQueries";
 
 class InstrumentsTab extends React.Component {
     constructor(props) {
@@ -22,14 +23,17 @@ class InstrumentsTab extends React.Component {
             openPopupDeleteConfirm: false,
             open: false,
             loading: true,
-            instruments: []
+            instruments: [], 
+            musicalFormations: []
         }
     }
 
     componentDidMount() {
         getInstrumentsByUser().then((res) => {
-            this.setState({ instruments: res.instrumentsByUser }, () => {
-                this.setState({ loading: false });
+            getMusicalFormations().then((res2) => {
+                this.setState({ musicalFormations: res2.musicalFormations, instruments: res.instrumentsByUser }, () => {
+                    this.setState({ loading: false });
+                })
             })
         })
     }
@@ -143,6 +147,7 @@ class InstrumentsTab extends React.Component {
                     >
                         <div style={{ display: "flex", justifyContent: "center" }}>
                             <InstrumentForm
+                                musicalFormations={this.state.musicalFormations}
                                 parentCallback={(instrument) =>
                                     this.addInstrument(instrument)
                                 }></InstrumentForm>
@@ -163,6 +168,7 @@ class InstrumentsTab extends React.Component {
                             <InstrumentForm
                                 isEditable={true}
                                 instrument={this.state.currentInstrument}
+                                musicalFormations={this.state.musicalFormations}
                                 parentCallback={(instrument) =>
                                     this.modifyInstrument(instrument)
                                 }></InstrumentForm>

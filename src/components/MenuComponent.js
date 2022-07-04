@@ -17,7 +17,6 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Link as LinkRouter } from "react-router-dom";
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Collapse } from '@mui/material';
-import EventIcon from '@mui/icons-material/Event';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import CheckroomIcon from '@mui/icons-material/Checkroom';

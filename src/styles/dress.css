@@ -1,0 +1,14 @@
+@media only screen and (max-width: 450px) {
+    .articlesTabEntetes {
+        visibility: collapse;
+        height: 0px;
+    }
+
+    .articleTitle {
+        text-align: center;
+    }
+}
+
+.article {
+    border-top: 3px solid #DFDFDF;
+}

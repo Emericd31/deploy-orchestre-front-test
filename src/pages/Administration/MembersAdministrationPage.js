@@ -1,11 +1,9 @@
 import React from "react";
-import { GreenButton, GreenSwitch, RedButton } from "../../components/General/StyledComponents/StyledButtons";
+import { GreenButton } from "../../components/General/StyledComponents/StyledButtons";
 import { Link as LinkRouter } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
-import { Chip, Collapse, Grid } from "@mui/material";
+import { Chip, Collapse, Grid, Paper } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CloseIcon from '@mui/icons-material/Close';
@@ -14,21 +12,31 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
 import "../../App.css";
 import "../../styles/membersAdmin.css";
-import { getAllRights, getUsers } from "../../GraphQL/queries/UserQueries";
+import { getAllRights, getAllTypes, getUsers } from "../../GraphQL/queries/UserQueries";
 import { rightIsInRoleV2 } from "../../Helpers/RightsGestion";
 import Popup from "../../components/General/Popups/Popup";
 import ConfirmPopup from "../../components/General/Popups/ConfirmPopup";
-import { assignRightToUser, deleteUser, removeRightFromUser } from "../../GraphQL/mutations/UserMutations";
+import { assignRightToUser, assignTypeToUser, deleteUser, removeRightFromUser, removeTypeFromUser } from "../../GraphQL/mutations/UserMutations";
 import { AppContext } from "../../Context";
 import CustomizedSnackbars from "../../components/General/Popups/CustomizedSnackbar";
 import { superUserEmail } from "../../GraphQL/settings";
 import ActionButtons from "../../components/General/Buttons/ActionButtons";
+import { typeIsInUser } from "../../Helpers/UserTypesGestion";
+import GeneralDataTab from "../../components/User/Account/GeneralDataTab";
+import ModifyGeneralDataTab from "../../components/User/Gestion/ModifyGenaralDataTab";
+import ModifyLegalGuardiansTab from "../../components/User/Gestion/ModifyLegalGuardiansTab";
+import ModifyInstrumentsTab from "../../components/User/Gestion/ModifyInstrumentsTab";
+import ModifyHealthCardTab from "../../components/User/Gestion/ModifyHealthCardTab";
+import ModifyVehiclesTab from "../../components/User/Gestion/ModifyVehiclesTab";
+import ModifyImageRightTab from "../../components/User/Gestion/ModifyImageRightTab";
 
 function Row(props) {
     const { user } = props;
     const [open, setOpen] = React.useState(false);
+    const [openRights, setOpenRights] = React.useState(false);
     const [openPopupEdit, setOpenPopupEdit] = React.useState(false);
     const [openPopupDeleteConfirm, setOpenPopupDeleteConfirm] = React.useState(false);
+    const [personalDataOpen, setPersonalDataOpen] = React.useState(false);
 
     // rights
     const [accessApp, setAccessApp] = React.useState(rightIsInRoleV2(user.userRights, "access_app"));
@@ -37,6 +45,9 @@ function Row(props) {
     const [manageLockerRoom, setManageLockerRoom] = React.useState(rightIsInRoleV2(user.userRights, "manage_locker_room"));
     const [manageSinisters, setManageSinisters] = React.useState(rightIsInRoleV2(user.userRights, "manage_sinisters"));
     const [manageCommunication, setManageCommunication] = React.useState(rightIsInRoleV2(user.userRights, "manage_communication"));
+    const [activeMember, setActiveMember] = React.useState(typeIsInUser(user.userTypes, "ACTIF"));
+    const [conseilMember, setConseilMember] = React.useState(typeIsInUser(user.userTypes, "CONSEIL"));
+    const [bureauMember, setBureauMember] = React.useState(typeIsInUser(user.userTypes, "BUREAU"));
 
     return (
         <div style={{ marginBottom: "10px" }}>
@@ -73,7 +84,7 @@ function Row(props) {
                         onClick={() => setOpen(!open)}
                         style={{ float: "right", marginLeft: "20px" }}
                     >
-                        {open ? <KeyboardArrowUpIcon sx={{ color: { xs: "white", lg: "black" }}} /> : <KeyboardArrowDownIcon sx={{ color: { xs: "white", lg: "black" }}} />}
+                        {open ? <KeyboardArrowUpIcon sx={{ color: { xs: "white", lg: "black" } }} /> : <KeyboardArrowDownIcon sx={{ color: { xs: "white", lg: "black" } }} />}
                     </IconButton>
                 </Grid>
             </Grid>
@@ -145,88 +156,216 @@ function Row(props) {
                     setOpenPopupEdit(false)
                 }
             >
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <h2 style={{ textAlign: "center" }}>Modifier les droits</h2>
-                        </Grid>
-                        {/* First line */}
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Accès à l'application</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={accessApp} onChange={(event) => {
-                                setAccessApp(!accessApp);
-                                props.changeRightFunction(event, user.id, "access_app");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Gestion des membres</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={manageMembers} onChange={(event) => {
-                                setManageMembers(!manageMembers);
-                                props.changeRightFunction(event, user.id, "manage_members");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-
-                        {/* second line */}
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Gestion des évènements</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={manageEvents} onChange={(event) => {
-                                setManageEvents(!manageEvents);
-                                props.changeRightFunction(event, user.id, "manage_events");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Gestion du vestiaire</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={manageLockerRoom} onChange={(event) => {
-                                setManageLockerRoom(!manageLockerRoom);
-                                props.changeRightFunction(event, user.id, "manage_locker_room");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-
-                        {/* third line */}
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Gestion des sinistres</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={manageSinisters} onChange={(event) => {
-                                setManageSinisters(!manageSinisters);
-                                props.changeRightFunction(event, user.id, "manage_sinisters");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-                        <Grid item xs={6} md={2} style={{ display: "flex", alignItems: "center", justifyContent: "left" }}>
-                            <p>Communication générale</p>
-                        </Grid>
-                        <Grid item xs={6} md={1} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <GreenSwitch checked={manageCommunication} onChange={(event) => {
-                                setManageCommunication(!manageCommunication);
-                                props.changeRightFunction(event, user.id, "manage_communication");
-                            }
-                            } />
-                        </Grid>
-                        <Grid item xs={0} md={2}></Grid>
-                    </Grid>
+                <div style={{ backgroundColor: "white", borderRadius: "5px", marginBottom: "20px" }}>
+                    <Paper elevation={3}>
+                        <div style={{ display: "flex" }}>
+                            <p style={{ marginLeft: "20px" }}>Droits et types de membre</p>
+                            <div style={{ margin: "auto 10px auto auto" }}>
+                                <IconButton
+                                    aria-label="expand row"
+                                    size="small"
+                                    onClick={() => setOpenRights(!openRights)}
+                                >
+                                    {openRights ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                </IconButton>
+                            </div>
+                        </div>
+                        <Collapse in={openRights} timeout="auto" unmountOnExit>
+                            <Grid container style={{ paddingLeft: "2%", paddingRight: "2%", paddingBottom: "20px" }}>
+                                <Grid item xs={12}>
+                                    <h2 style={{ textAlign: "center", fontSize: "18px" }}>Droits</h2>
+                                </Grid>
+                                {/* First line */}
+                                <Grid container>
+                                    <Grid item lg={3} md={6} xs={12} sytle={{ marginBottom: "20px 20px 10px 20px" }}>
+                                        {
+                                            accessApp ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setAccessApp(!accessApp);
+                                                        props.changeRightFunction(accessApp, user.id, "access_app");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Accès à l'application" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setAccessApp(!accessApp);
+                                                        props.changeRightFunction(accessApp, user.id, "access_app");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Accès à l'application" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12}>
+                                        {
+                                            manageMembers ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageMembers(!manageMembers);
+                                                        props.changeRightFunction(manageMembers, user.id, "manage_members");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Gestion des membres" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageMembers(!manageMembers);
+                                                        props.changeRightFunction(manageMembers, user.id, "manage_members");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Gestion des membres" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12}>
+                                        {
+                                            manageEvents ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageEvents(!manageEvents);
+                                                        props.changeRightFunction(manageEvents, user.id, "manage_events");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Gestion des évènements" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageEvents(!manageEvents);
+                                                        props.changeRightFunction(manageEvents, user.id, "manage_events");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Gestion des évènements" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12}>
+                                        {
+                                            manageLockerRoom ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageLockerRoom(!manageLockerRoom);
+                                                        props.changeRightFunction(manageLockerRoom, user.id, "manage_locker_room");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Gestion du vestiaire" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageLockerRoom(!manageLockerRoom);
+                                                        props.changeRightFunction(manageLockerRoom, user.id, "manage_locker_room");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Gestion du vestiaire" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12}>
+                                        {
+                                            manageSinisters ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageSinisters(!manageSinisters);
+                                                        props.changeRightFunction(manageSinisters, user.id, "manage_sinisters");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Gestion des sinistres" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageSinisters(!manageSinisters);
+                                                        props.changeRightFunction(manageSinisters, user.id, "manage_sinisters");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Gestion des sinistres" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12}>
+                                        {
+                                            manageCommunication ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageCommunication(!manageCommunication);
+                                                        props.changeRightFunction(manageCommunication, user.id, "manage_communication");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Communication générale" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setManageCommunication(!manageCommunication);
+                                                        props.changeRightFunction(manageCommunication, user.id, "manage_communication");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Communication générale" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                </Grid>
+                                {/* USER TYPES  */}
+                                <Grid item xs={12}>
+                                    <h2 style={{ textAlign: "center", fontSize: "18px" }}>Types du membre</h2>
+                                </Grid>
+                                <Grid container>
+                                    <Grid item lg={3} md={6} xs={12} sytle={{ marginBottom: "20px 20px 10px 20px" }}>
+                                        {
+                                            activeMember ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setActiveMember(!activeMember);
+                                                        props.changeTypeFunction(activeMember, user.id, "ACTIF");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Membre actif" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setActiveMember(!activeMember);
+                                                        props.changeTypeFunction(activeMember, user.id, "ACTIF");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Membre actif" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12} sytle={{ marginBottom: "20px 20px 10px 20px" }}>
+                                        {
+                                            bureauMember ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setBureauMember(!bureauMember);
+                                                        props.changeTypeFunction(bureauMember, user.id, "BUREAU");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Membre du bureau" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setBureauMember(!bureauMember);
+                                                        props.changeTypeFunction(bureauMember, user.id, "BUREAU");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Membre du bureau" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item lg={3} md={6} xs={12} sytle={{ marginBottom: "20px 20px 10px 20px" }}>
+                                        {
+                                            conseilMember ? (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setConseilMember(!conseilMember);
+                                                        props.changeTypeFunction(conseilMember, user.id, "CONSEIL");
+                                                    }}
+                                                    avatar={<DoneIcon style={{ color: "white" }} />} label="Membre du conseil d'administration" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#00AF06", color: "white" }} />
+                                            ) : (
+                                                <Chip
+                                                    onClick={() => {
+                                                        setConseilMember(!conseilMember);
+                                                        props.changeTypeFunction(conseilMember, user.id, "CONSEIL");
+                                                    }}
+                                                    avatar={<CloseIcon style={{ color: "white" }} />} label="Membre du conseil d'administration" style={{ marginRight: "10px", marginBottom: "10px", backgroundColor: "#FF0000", color: "white" }} />
+                                            )
+                                        }
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Collapse>
+                    </Paper>
                 </div>
-            </Popup>
+                <ModifyGeneralDataTab />
+                <ModifyLegalGuardiansTab />
+                <ModifyInstrumentsTab />
+                <ModifyHealthCardTab />
+                <ModifyVehiclesTab />
+                <ModifyImageRightTab />
+            </Popup >
 
             <ConfirmPopup
                 title={"Supprimer un utilisateur"}
@@ -238,7 +377,7 @@ function Row(props) {
                 cancelButtonFunction={() => setOpenPopupDeleteConfirm(false)}
                 buttonDisabled={false}
             />
-        </div>
+        </div >
     );
 }
 
@@ -251,15 +390,16 @@ class MembersAdministrationPage extends React.Component {
             notifOpen: false,
             notifMessage: "",
             users: [],
-            allRights: []
+            allRights: [],
+            allTypes: []
         }
     }
 
     componentDidMount = () => {
         getUsers().then((res) => {
-            this.setState({ users: res.users }, () => {
-                getAllRights().then((res) => {
-                    this.setState({ allRights: res.allRights });
+            getAllRights().then((res2) => {
+                getAllTypes().then((res3) => {
+                    this.setState({ users: res.users, allRights: res2.allRights, allTypes: res3.allTypes });
                 })
             });
         });
@@ -288,10 +428,10 @@ class MembersAdministrationPage extends React.Component {
         });
     }
 
-    changeRight = (event, userId, rightname) => {
+    changeRight = (value, userId, rightname) => {
         var user = this.state.users.find((user) => user.id == userId);
         var right = this.state.allRights.find((right) => right.name == rightname);
-        if (event.target.checked) {
+        if (!value) {
             assignRightToUser(userId, right.id).then((res) => {
                 if (res.assignRightToUser.statusCode == 200) {
                     var newRight = {
@@ -306,6 +446,29 @@ class MembersAdministrationPage extends React.Component {
             removeRightFromUser(userId, right.id).then((res) => {
                 if (res.removeRightFromUser.statusCode == 200) {
                     user.userRights = user.userRights.filter((item) => item.right.name !== rightname);
+                }
+            })
+        }
+    }
+
+    changeType = (value, userId, typeName) => {
+        var user = this.state.users.find((user) => user.id == userId);
+        var type = this.state.allTypes.find((type) => type.memberType == typeName);
+        if (!value) {
+            assignTypeToUser(userId, type.id).then((res) => {
+                if (res.assignTypeToUser.statusCode == 200) {
+                    var newType = {
+                        type: {
+                            memberType: typeName
+                        }
+                    }
+                    user.userTypes.push(newType);
+                }
+            })
+        } else {
+            removeTypeFromUser(userId, type.id).then((res) => {
+                if (res.removeTypeFromUser.statusCode == 200) {
+                    user.userTypes = user.userTypes.filter((item) => item.type.memberType !== typeName);
                 }
             })
         }
@@ -356,7 +519,8 @@ class MembersAdministrationPage extends React.Component {
                                     key={user.id}
                                     user={user}
                                     userId={this.state.userId}
-                                    changeRightFunction={(event, userId, rightname) => this.changeRight(event, userId, rightname)}
+                                    changeRightFunction={(value, userId, rightname) => this.changeRight(value, userId, rightname)}
+                                    changeTypeFunction={(value, userId, typeName) => this.changeType(value, userId, typeName)}
                                     deleteFunction={(userId) => this.deleteUserFunction(userId)}
                                     dictionary={dictionary}
                                 />

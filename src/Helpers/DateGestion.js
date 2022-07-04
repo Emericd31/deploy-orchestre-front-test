@@ -34,7 +34,20 @@ export var getDayNumbersMonthLettersYearNumbers = function (nonFormattedDate) {
 
 export var getHours = function (nonFormattedDate) {
     var date = new Date(nonFormattedDate);
-    return date.getHours() + "h" + date.getMinutes(); 
+    var hours = date.getHours(); 
+    var result = ""; 
+    if (hours < 10) {
+        result += "0" + hours;
+    } else {
+        result += hours;
+    }
+    result += "h";
+    var minutes = date.getMinutes();
+    if (minutes == 0) {
+        result += "0";
+    }
+    result += minutes;
+    return result; 
 }
 
 export var getDateDiff = function (nonFormattedStartDate, nonFormattedEndDate) {

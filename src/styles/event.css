@@ -1,0 +1,41 @@
+@media only screen and (max-width: 1200px) {
+    .eventArrow {
+        background-color: #1E70B7;
+        height: 50px;
+    }
+
+    .body .eventsTab .eventTabHeader {
+        display: none;
+    }
+
+    .eventContentTab {
+        text-align: center;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .eventContentTab {
+        text-align: left;
+        padding-left: 10px;
+    }
+}
+
+.eventTitleTab {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.eventTabHeader {
+    background-color: #1E70B7;
+    color: white;
+    font-weight: bold;
+}
+
+.button + .button {
+    margin-left: 10px;
+}
+
+.moreDetailsButton {
+    background-color: #1E70B7;
+    height: 50px;
+}

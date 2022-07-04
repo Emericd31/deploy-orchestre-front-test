@@ -7,7 +7,11 @@ export default function ActionButtons(props) {
     return (
         <div className="actionButtons">
             <GreenButton className="button" onClick={() => props.functionEdit()}><EditIcon /></GreenButton>
-            <RedButton className="button" onClick={() => props.functionDelete()}><DeleteIcon /></RedButton>
+            {
+                props.isNotDeletable ? "" : (
+                    <RedButton className="button" onClick={() => props.functionDelete()}><DeleteIcon /></RedButton>
+                )
+            }
         </div>
     )
 }

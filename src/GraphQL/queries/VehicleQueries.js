@@ -1,19 +1,15 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql } from "graphql-request";
 import { serverClient } from "../settings";
 
-const client = new GraphQLClient("http://localhost:5003/graphql");
-
-export var getActualities = async function () {
+export var getMyVehicles = async function () {
     const query = gql`
     {
-        actualities {
+        vehiclesByUser {
             id
-            title
-            author
-            content
-            link
-            textLink
-            creationDate
+            marque
+            modele
+            puissance
+            immatriculation
         }
     }
   `;
